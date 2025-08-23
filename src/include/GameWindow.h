@@ -58,6 +58,8 @@ GameWindow* createGameWindow(
  */
 void initGameWindow( GameWindow *gameWindow );
 
+void updateGameState(GameWorld *gw);
+
 /**
  * @brief Destroys a GameWindow object and its dependecies.
  */
