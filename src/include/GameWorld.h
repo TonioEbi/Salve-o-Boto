@@ -6,9 +6,19 @@
  * @copyright Copyright (c) 2025
  */
 #pragma once
+#include "Player.h"
+#include "Npc.h"
+#include "enums.h"
+#define MAX_NPC 1000
 
 typedef struct GameWorld {
-    int dummy;
+    Player *player;
+    Npc *npc[MAX_NPC];
+    int activeNpc;
+    float timer;
+    int timeCount;
+    int lastSec;
+    State gameState;
 } GameWorld;
 
 /**
