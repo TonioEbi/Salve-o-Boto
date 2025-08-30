@@ -14,7 +14,7 @@ Player * createPlayer(void){   // creates the player with the inicial settings
     p->size.y = GetScreenHeight() * 0.85f;
     p->size.width = 90;
     p->size.height = 30;
-    p->life = 3;
+    p->oxigen = 100;
     p->speed.x = 300;
     p->speed.y = 300;
     p->score = 0;
@@ -51,8 +51,12 @@ void updatePlayer(Player *p, float delta){
 
     if(p->size.y + p->size.height > GetScreenHeight()){
         p->size.y = GetScreenHeight() - p->size.height;
-    }else if(p->size.y < GetScreenHeight() / 3){
-        p->size.y = GetScreenHeight() / 3;
+    }else if(p->size.y < (GetScreenHeight() / 3) - (p->size.height)){
+        p->size.y = (GetScreenHeight() / 3) - (p->size.height);
     }
 
+}
+
+void drawOxigenBar(Player *p){
+    DrawRectangle(10, 10, 3 * p->oxigen, 30, DARKGREEN);
 }

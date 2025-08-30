@@ -25,8 +25,9 @@ void isCaptured(Player* p, Npc* n){
             n->captured = true; //the player capture the npc as he colide with they and press the space bar
             if(n->enemy){ //checks if the npc is a enemy, if it is the player scores, if it ain't the player loses a life
                 p->score++;
+                p->oxigen += 10;
             }else{
-                p->life--; 
+                p->oxigen -=10; 
             }
         }
     }

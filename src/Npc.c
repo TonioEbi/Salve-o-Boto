@@ -16,7 +16,6 @@ Npc* createNpc(void){ //creates the npc with the starting values
     n->speed = 150;
     n->captured = false;
     n->enemy = GetRandomValue(0, 1);
-    n->hostile = n->enemy ? false : (GetRandomValue(0,1));
     n->dealtDamage = false;
 
     return n;
@@ -25,8 +24,6 @@ Npc* createNpc(void){ //creates the npc with the starting values
 void drawNpc(Npc* n){ //draws the npc
     if(n->enemy){
         DrawRectangle(n->size.x, n->size.y, n->size.width, n->size.height, RED);
-    }else if(n->hostile) {
-        DrawRectangle(n->size.x, n->size.y, n->size.width, n->size.height, PURPLE);
     }else{
         DrawRectangle(n->size.x, n->size.y, n->size.width, n->size.height, GREEN);
     }

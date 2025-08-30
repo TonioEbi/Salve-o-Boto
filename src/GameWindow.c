@@ -131,7 +131,7 @@ void initGameWindow( GameWindow *gameWindow ) {
 }
 
 void updateGameState(GameWorld *gw){
-    if(gw->player->life == 0) { //as soon as the player looses all their lives the game stop
+    if(gw->player->oxigen <= 0) { //as soon as the player looses all their lives the game stop
         gw->gameState = GAME_OVER;
     }else if(IsKeyDown(KEY_P)){ //the player can deliberatly pause the game pressing P
         gw->gameState = GAME_PAUSED;
@@ -140,7 +140,7 @@ void updateGameState(GameWorld *gw){
     if(gw->gameState == GAME_OVER){
         if(IsKeyDown(KEY_ENTER)){
             gw->gameState = GAME_RUNNING;
-            gw->player->life = 3;
+            gw->player->oxigen = 100;
             gw->player->score = 0; //the game start running again when the player press ENTER
         }
     }else if(gw->gameState == GAME_PAUSED){

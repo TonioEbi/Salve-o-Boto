@@ -3,7 +3,7 @@
 
 typedef struct Player {
     Rectangle size;
-    int life;
+    int oxigen;
     Vector2 speed;
     int score;
 } Player;
@@ -13,3 +13,5 @@ Player* createPlayer(void);
 void updatePlayer(Player *p, float delta);
 
 void drawPlayer(Player *p);
+
+void drawOxigenBar(Player *p);

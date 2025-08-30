@@ -78,14 +78,28 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
                 }
             }
         }
+
+        if(gw->player->oxigen > 0){
+            if(gw->player->size.y < (GetScreenHeight() / 3) + (gw->player->size.height)){
+                if(gw->player->oxigen < 100){
+                    gw->player->oxigen += 2;
+                }else if(gw->player->oxigen >= 100){
+                    gw->player->oxigen = 100;
+                }
+            }else{
+                gw->player->oxigen -= 2;
+            }
+        }else{
+            gw->gameState = GAME_OVER;
+        }
     }
 
     for (int i = 0; i < MAX_NPC; i++) {
         if (gw->npc[i] != NULL) {
             updateNpc(gw->npc[i], delta);
             if(playerNpcCollision(gw->player, gw->npc[i])){
-                if(gw->npc[i]->hostile && !gw->npc[i]->dealtDamage){ //deals damage when the player have contact with an hostile npc and don't allow the same enemy to deal more damamge
-                    gw->player->life--;
+                if(!gw->npc[i]->dealtDamage){ //deals damage when the player have contact with a npc and don't allow the same enemy to deal more damamge
+                    gw->player->oxigen -= 10;
                     gw->npc[i]->dealtDamage = true;
                 }
             }
@@ -112,6 +126,8 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     drawPlayer(gw->player);
 
     DrawLine(0, GetScreenHeight() / 3, GetScreenWidth(), GetScreenHeight() / 3, BLUE);
+
+    drawOxigenBar(gw->player);
 
     EndDrawing();
 
