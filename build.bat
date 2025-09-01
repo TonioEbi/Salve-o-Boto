@@ -72,7 +72,7 @@ GOTO nextStep
 
 :compile
 ECHO Compiling...
-gcc src/*.c -o %CompiledFile% -O1 -Wall -Wextra -Wno-unused-parameter -pedantic-errors -std=c99 -Wno-missing-braces -I src/include/ -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
+gcc src/main.c src/GameMechanics.c src/GameWindow.c src/GameWorld.c src/Npc.c src/Player.c src/ResourceManager.c src/utils.c -o %CompiledFile% -O1 -Wall -Wextra -Wno-unused-parameter -pedantic-errors -std=c99 -Wno-missing-braces -I src/include/ -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm
 GOTO nextStep
 
 :run
