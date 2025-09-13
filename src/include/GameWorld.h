@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Npc.h"
 #include "enums.h"
+#include "Bubble.h"
 #define MAX_NPC 1000
 
 typedef struct GameWorld {
@@ -18,6 +19,7 @@ typedef struct GameWorld {
     float timer;
     int timeCount;
     int lastSec;
+    Bubble *bubble;
     State gameState;
 } GameWorld;
 

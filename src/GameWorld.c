@@ -15,6 +15,7 @@
 
 #include "Player.h"
 #include "Npc.h"
+#include "Bubble.h"
 #include "GameMechanics.h"
 
 //#include "raylib/raymath.h"
@@ -38,7 +39,7 @@ GameWorld* createGameWorld( void ) { //inicialize the gameworld with the inicial
     gw->timeCount = 0;
     gw->lastSec = 0;
     gw->gameState = GAME_RUNNING;
-
+    gw->bubble = createBubble();
     return gw;
 
 }
@@ -62,6 +63,7 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
     updatePlayer( gw->player, delta );
+    updateBubble(gw->bubble, delta);
 
     //timer logic that controls the enemies spawn
     int currentSec = (int)gw->timer;
@@ -106,6 +108,8 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             isCaptured(gw->player, gw->npc[i]); //checks if the npc was captured
         }
     }
+
+    
 }
 
 
@@ -124,6 +128,11 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     }
 
     drawPlayer(gw->player);
+    
+    if(!gw->bubble->pop){
+
+        drawBubble(gw->bubble);
+    }
 
     DrawLine(0, GetScreenHeight() / 3, GetScreenWidth(), GetScreenHeight() / 3, BLUE);
 
