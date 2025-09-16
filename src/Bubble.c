@@ -9,12 +9,12 @@ Bubble* createBubble(void){
         return NULL;
     }
 
-    b->size.x = GetRandomValue(GetScreenWidth()/2, GetScreenWidth() - b->size.width);
+    b->size.x = GetScreenWidth()/2;
     b->size.width = 45;
-    b->size.height = 45;
-    b->speed = 171;
+    b->size.height = 15;
+    b->speed = 170;
     b->oxyregen = 25;
-    b->size.y = GetScreenHeight();
+    b->size.y = GetScreenHeight()/2;
     b->pop = false;
     
     return b;
@@ -33,6 +33,6 @@ void updateBubble(Bubble *b, float delta){
      if(b->size.y < GetScreenHeight()/3){
 
         b->pop = true;
-    }
+     }
 
 }
