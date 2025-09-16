@@ -34,12 +34,16 @@ GameWorld* createGameWorld( void ) { //inicialize the gameworld with the inicial
     for(int i = 0; i < MAX_NPC; i++){
         gw->npc[i] = NULL;
     }
+    for(int i = 0; i < MAX_BUBBLE; i++){
+        gw->bubble[i] = NULL;
+    }
     gw->activeNpc = 0;
     gw->timer = 0.0f;
     gw->timeCount = 0;
     gw->lastSec = 0;
+    gw->BubbleTimer = 0;
+    gw->activeBubble = 0;
     gw->gameState = GAME_RUNNING;
-    gw->bubble = createBubble();
     return gw;
 
 }
@@ -63,13 +67,21 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
     updatePlayer( gw->player, delta );
-    updateBubble(gw->bubble, delta);
+    
+    for(int i = 0; i < MAX_BUBBLE; i++){
+        if(gw->bubble[i] != NULL){
+            updateBubble(gw->bubble[i], delta);
+            playerBubbleInteract(gw->player, gw->bubble[i]);
+        }
+        
+    }
 
     //timer logic that controls the enemies spawn
     int currentSec = (int)gw->timer;
 
     if (currentSec > gw->lastSec) {
         gw->timeCount++;
+        gw->BubbleTimer++;
         gw->lastSec = currentSec;
         if (gw->activeNpc < MAX_NPC) {
             for (int i = 0; i < MAX_NPC; i++) {
@@ -94,8 +106,23 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         }else{
             gw->gameState = GAME_OVER;
         }
+
+        if(gw->BubbleTimer % 6 == 0){
+            if(gw->activeBubble < MAX_BUBBLE){
+            for (int i = 0; i < MAX_BUBBLE; i++){
+                if(gw->bubble[i] == NULL){
+                    gw->bubble[i] = createBubble();
+                    gw->activeBubble++;
+                    break;
+
+                    }
+                }
+            }
+        }
+
     }
 
+   
     for (int i = 0; i < MAX_NPC; i++) {
         if (gw->npc[i] != NULL) {
             updateNpc(gw->npc[i], delta);
@@ -109,7 +136,6 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         }
     }
 
-    
 }
 
 
@@ -129,11 +155,14 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
 
     drawPlayer(gw->player);
     
-    if(!gw->bubble->pop){
+    for(int i = 0; i < MAX_BUBBLE; i++){
+      if(gw->bubble[i] != NULL && !gw->bubble[i]->pop){
+         drawBubble(gw->bubble[i]);
 
-        drawBubble(gw->bubble);
+        }
+        
     }
-
+    
     DrawLine(0, GetScreenHeight() / 3, GetScreenWidth(), GetScreenHeight() / 3, BLUE);
 
     drawOxigenBar(gw->player);
