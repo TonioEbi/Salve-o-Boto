@@ -2,6 +2,7 @@
 #include "raylib/raylib.h"
 #include <stdlib.h>
 
+static Texture2D playerspr;
 
 Player * createPlayer(void){   // creates the player with the inicial settings
 
@@ -12,8 +13,8 @@ Player * createPlayer(void){   // creates the player with the inicial settings
 
     p->size.x = GetScreenWidth() / 8.0f;
     p->size.y = GetScreenHeight() * 0.85f;
-    p->size.width = 90;
-    p->size.height = 30;
+    p->size.width = 135;
+    p->size.height = 90;
     p->oxigen = 100;
     p->speed.x = 300;
     p->speed.y = 300;
@@ -23,7 +24,9 @@ Player * createPlayer(void){   // creates the player with the inicial settings
 }
 
 void drawPlayer(Player *p){
-    DrawRectangle(p->size.x, p->size.y, p->size.width, p->size.height, WHITE); //draws the player on the screen
+    playerspr = LoadTexture("resources/images/diver.png");
+    DrawTexture(playerspr, p->size.x, p->size.y, WHITE);
+    
 }
 
 void updatePlayer(Player *p, float delta){

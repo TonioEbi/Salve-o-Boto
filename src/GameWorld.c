@@ -144,8 +144,8 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
  */
 void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its components
 
-    BeginDrawing();
-    ClearBackground(BLACK);
+    BeginDrawing();    
+    ClearBackground((Color){ 16, 62, 87, 255 });
 
     for (int i = 0; i < MAX_NPC; i++) {
         if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
