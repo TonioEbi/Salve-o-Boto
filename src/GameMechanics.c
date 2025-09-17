@@ -32,3 +32,17 @@ void isCaptured(Player* p, Npc* n){
         }
     }
 }
+
+void playerBubbleInteract(Player* p, Bubble* b){
+     if(CheckCollisionRecs(p->size, b->size) && !b->pop){
+        if(p->oxigen < 100){
+            p->oxigen += 20;
+            if(p->oxigen > 100){
+               p->oxigen = 100;
+               
+            }  
+        } 
+      b->pop = true;
+    }
+
+}
