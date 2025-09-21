@@ -93,4 +93,34 @@ void drawMenuControls(State *gameState)
     }
 
     EndDrawing();
+}    
+
+void drawMenuGameOver( State *gameState) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    
+    //DrawTexture() Vamo ter que criar a imagem do gameover ainda
+
+    //Rectangle btnRecomecar = {}
+    //Rectangle btnMenu = {}
+
+    Vector2 mouse = GetMousePosition();
+
+     /*if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mouse, btnRecomecar))
+        {
+            *gameState = GAME_START;
+        }
+    }
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mouse, btnMenu))
+        {
+            *gameState = GAME_MENU;
+        }
+    } */
+
+    EndDrawing();
 }
+
+

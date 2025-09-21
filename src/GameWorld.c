@@ -81,6 +81,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             }
         }
 
+        //control of oxigen
         if(gw->player->oxigen > 0){
             if(gw->player->size.y < (GetScreenHeight() / 3) + (gw->player->size.height)){
                 if(gw->player->oxigen < 100){
@@ -88,8 +89,11 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
                 }else if(gw->player->oxigen >= 100){
                     gw->player->oxigen = 100;
                 }
-            }else{
-                gw->player->oxigen -= 2;
+            }else if (gw->player->size.y > (GetScreenHeight() / 3) + (gw->player->size.height) && 
+            gw->player->size.y < (GetScreenHeight() / 3 * 2) + (gw->player->size.height)) {
+                gw->player->oxigen -= 3;
+            } else {
+                gw->player->oxigen -= 6;
             }
         }else{
             gw->gameState = GAME_OVER;
