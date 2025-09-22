@@ -6,6 +6,7 @@ typedef struct Player {
     int oxigen;
     Vector2 speed;
     int score;
+    Texture2D playerSpr;
 } Player;
 
 Player* createPlayer(void);

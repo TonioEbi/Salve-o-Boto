@@ -2,8 +2,6 @@
 #include "raylib/raylib.h"
 #include <stdlib.h>
 
-static Texture2D playerspr;
-
 Player * createPlayer(void){   // creates the player with the inicial settings
 
     Player *p = (Player*) malloc(sizeof(Player));
@@ -19,13 +17,13 @@ Player * createPlayer(void){   // creates the player with the inicial settings
     p->speed.x = 300;
     p->speed.y = 300;
     p->score = 0;
+    p->playerSpr = LoadTexture("resources/images/diver.png");
 
     return p;
 }
 
 void drawPlayer(Player *p){
-    playerspr = LoadTexture("resources/images/diver.png");
-    DrawTexture(playerspr, p->size.x, p->size.y, WHITE);
+    DrawTexture(p->playerSpr, p->size.x, p->size.y, WHITE);
     
 }
 
