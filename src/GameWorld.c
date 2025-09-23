@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "GameWorld.h"
 #include "ResourceManager.h"
@@ -93,21 +94,21 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             }
         }
 
-        //control of oxigen
-        if(gw->player->oxigen > 0){
-            if(gw->player->size.y < (GetScreenHeight() / 3) + (gw->player->size.height)){
-                if(gw->player->oxigen < 100){
-                    gw->player->oxigen += 2;
-                }else if(gw->player->oxigen >= 100){
-                    gw->player->oxigen = 100;
+        //Oxygen control
+        if(gw->player->oxygen > 0){
+            if(gw->player->size.y == GetScreenHeight() / 3) {
+                if(gw->player->oxygen < 100){
+                    gw->player->oxygen = fmin(gw->player->oxygen + 2, 100);
                 }
-            }else if (gw->player->size.y > (GetScreenHeight() / 3) + (gw->player->size.height) && 
-            gw->player->size.y < (GetScreenHeight() / 3 * 2) + (gw->player->size.height)) {
-                gw->player->oxigen -= 3;
-            } else {
-                gw->player->oxigen -= 6;
             }
-        }else{
+            else if(gw->player->size.y + gw->player->size.height / 2 < (GetScreenHeight() * 2 / 3)) {
+                gw->player->oxygen -= 3;
+            }
+            else {
+                gw->player->oxygen -= 6;
+            }
+        }
+        else{
             gw->gameState = GAME_OVER;
         }
 
@@ -128,15 +129,23 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
 
    
     for (int i = 0; i < MAX_NPC; i++) {
-        if (gw->npc[i] != NULL) {
+        if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
             updateNpc(gw->npc[i], delta);
-            if(playerNpcCollision(gw->player, gw->npc[i])){
-                if(!gw->npc[i]->dealtDamage){ //deals damage when the player have contact with a npc and don't allow the same enemy to deal more damamge
-                    gw->player->oxigen -= 10;
-                    gw->npc[i]->dealtDamage = true;
+
+            //Checks if the player is currently using the net
+            if(gw->player->netTimer > 0.1) {
+                //Checks if the NPC was captured
+                checkCapture(gw->player, gw->npc[i]);
+            }
+
+            //Only deal damage to the player if the cooldown is 0
+            if(gw->player->damageCooldown == 0) {
+                //Checks if the NPC collided with the player
+                if(CheckCollisionRecs(gw->player->size, gw->npc[i]->size)){
+                    gw->player->damageCooldown = 1;
+                    gw->player->oxygen -= 10;
                 }
             }
-            isCaptured(gw->player, gw->npc[i]); //checks if the npc was captured
         }
     }
 
@@ -169,7 +178,7 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     
     DrawLine(0, GetScreenHeight() / 3, GetScreenWidth(), GetScreenHeight() / 3, BLUE);
 
-    drawOxigenBar(gw->player);
+    drawOxygenBar(gw->player);
 
     EndDrawing();
 

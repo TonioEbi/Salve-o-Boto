@@ -4,8 +4,6 @@
 #include "Bubble.h"
 #include <stdbool.h>
 
-bool playerNpcCollision(Player* p, Npc* n);
-
-void isCaptured(Player* p, Npc* n);
+void checkCapture(Player* p, Npc* n);
 
 void playerBubbleInteract(Player* p, Bubble* b);

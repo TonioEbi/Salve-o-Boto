@@ -9,14 +9,23 @@ Npc* createNpc(void){ //creates the npc with the starting values
         return NULL;
     }
 
-    n->size.x = GetScreenWidth();
     n->size.width = 45;
     n->size.height = 15;
-    n->size.y = GetRandomValue((GetScreenHeight() - n->size.height), GetScreenHeight() / 3);
     n->speed = 150;
+
+    //Creates the NPC from the left or right side of the screen
+    int dir = GetRandomValue(0, 1);
+    if(dir == 0) {
+        n->size.x = -n->size.width;
+    }
+    else {
+        n->size.x = GetScreenWidth();
+        n->speed *= -1;
+    }
+
+    n->size.y = GetRandomValue((GetScreenHeight() - n->size.height), GetScreenHeight() / 3);
     n->captured = false;
     n->enemy = GetRandomValue(0, 1);
-    n->dealtDamage = false;
 
     return n;
 }
@@ -31,9 +40,10 @@ void drawNpc(Npc* n){ //draws the npc
 }
 
 void updateNpc(Npc *n, float delta){ //update the npc position and state
-    n->size.x -= n->speed * delta;
-
     if(n->captured){
         n = NULL;
+    }
+    else {
+        n->size.x += n->speed * delta;
     }
 }

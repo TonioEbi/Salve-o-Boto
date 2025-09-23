@@ -7,7 +7,6 @@ typedef struct Npc {
     float speed;
     bool captured;
     bool enemy;
-    bool dealtDamage;
 }Npc;
 
 Npc* createNpc(void);

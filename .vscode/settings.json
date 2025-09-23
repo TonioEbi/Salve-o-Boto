@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "raylib.h": "c",
+        "gamewindow.h": "c",
+        "stdio.h": "c",
+        "stdbool.h": "c",
+        "gamemechanics.h": "c",
+        "stdlib.h": "c",
+        "math.h": "c"
+    }
+}
