@@ -69,6 +69,7 @@ void initGameWindow(GameWindow *gameWindow) {
             case GAME_RUNNING:
                 updateGameWorld(gameWindow->gw, GetFrameTime());
                 drawGameWorld(gameWindow->gw);
+                
                 break;
 
             case GAME_CONTROLS:
@@ -76,9 +77,11 @@ void initGameWindow(GameWindow *gameWindow) {
                 break;
 
             case GAME_OVER:
+                drawMenuGameOver(&gameWindow->gw->gameState);
                 break;
 
             case GAME_PAUSED:
+                drawMenuPause(&gameWindow->gw->gameState);
                 break;
 
             default:

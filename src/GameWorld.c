@@ -74,7 +74,13 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             updateBubble(gw->bubble[i], delta);
             playerBubbleInteract(gw->player, gw->bubble[i]);
         }
-        
+                    //pause
+    if(gw->gameState == GAME_RUNNING){
+    if(IsKeyPressed(KEY_P)){
+    gw->gameState = GAME_PAUSED;
+    }
+    }
+
     }
 
     //timer logic that controls the enemies spawn
@@ -93,6 +99,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
                 }
             }
         }
+
 
         //Oxygen control
         if(gw->player->oxygen > 0){

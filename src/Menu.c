@@ -1,24 +1,40 @@
 #include "Menu.h"
-
+//Menus
 static Texture2D menuBg;
 static Texture2D menuCredits;
 static Texture2D menuControls;
+static Texture2D menuGameOver;
+static Texture2D menuPause;
+
+//Botões
 static Texture2D controlsButton;
 static Texture2D playButton;
 static Texture2D creditsButton;
 static Texture2D backButton;
+static Texture2D menuButton;
+static Texture2D againButton;
+static Texture2D backButton2;
+
 
 
 void initMenuAssets(void) 
 {
+    //Menus
     menuBg = LoadTexture("resources/images/menu_bg.png"); 
     menuCredits = LoadTexture("resources/images/menu_crdts.png");
     menuControls = LoadTexture("resources/images/menu_ctrls.png");
+    menuGameOver = LoadTexture("resources/images/menu_gmov.png");
+    menuPause = LoadTexture("resources/images/menu_pause.png");
+
+    //Botões
     controlsButton = LoadTexture("resources/images/controles.png");
     playButton = LoadTexture("resources/images/jogar.png");
     creditsButton = LoadTexture("resources/images/creditos.png");
     backButton = LoadTexture("resources/images/voltar.png");
-
+    menuButton = LoadTexture("resources/images/bt_menu.png");
+    againButton = LoadTexture("resources/images/denovo.png");
+    backButton2 = LoadTexture("resources/images/voltar2.png");
+    
 }
 
 void unloadMenuAssets(void) 
@@ -26,9 +42,15 @@ void unloadMenuAssets(void)
     UnloadTexture(menuBg);
     UnloadTexture(menuControls);
     UnloadTexture(menuCredits);
+    UnloadTexture(menuGameOver);
+    UnloadTexture(menuPause);
+
     UnloadTexture(controlsButton);
     UnloadTexture(playButton);
     UnloadTexture(creditsButton);
+    UnloadTexture(menuButton);
+    UnloadTexture(againButton);
+    UnloadTexture(backButton2);
 
 }
 
@@ -46,7 +68,6 @@ static void DrawButtonAnimation(Rectangle dimensions, Texture2D texture, Vector2
         DrawTexture(texture, (int)dimensions.x, (int)dimensions.y, WHITE);
     }
 }
-
 
 void drawMainMenu(State *gameState) 
 {
@@ -137,17 +158,22 @@ void drawMenuGameOver( State *gameState) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     
-    //DrawTexture() Vamo ter que criar a imagem do gameover ainda
+    DrawTexture(menuGameOver, 0, 0, WHITE);
 
-    //Rectangle btnRecomecar = {}
-    //Rectangle btnMenu = {}
+    Rectangle btnMenu = { 105, 305, 182, 63 };
+    Rectangle btnAgain  = { 514, 305, 182, 63 };
 
     Vector2 mouse = GetMousePosition();
+    float scale = 1.1f;
 
-     /*if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnRecomecar))
+    DrawButtonAnimation(btnAgain, againButton, mouse, scale);
+    DrawButtonAnimation(btnMenu, menuButton, mouse, scale);
+
+
+     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mouse, btnAgain))
         {
-            *gameState = GAME_START;
+            *gameState = GAME_RUNNING;
         }
     }
 
@@ -155,8 +181,47 @@ void drawMenuGameOver( State *gameState) {
         if (CheckCollisionPointRec(mouse, btnMenu))
         {
             *gameState = GAME_MENU;
+            
         }
-    } */
+    }
+
+    EndDrawing();
+}
+
+void drawMenuPause( State *gameState) {
+    BeginDrawing();
+    
+    DrawTexture(menuPause, 0, 0, WHITE);
+
+    Rectangle btnMenu  = { 514, 305, 182, 63 };
+    Rectangle btnVoltar = { 309, 305, 182, 63 };
+    Rectangle btnControles = { 105, 305, 182, 63 };
+
+
+
+    Vector2 mouse = GetMousePosition();
+    float scale = 1.1f;
+
+    DrawButtonAnimation(btnMenu, menuButton, mouse, scale);
+    DrawButtonAnimation(btnVoltar, backButton2, mouse, scale);
+    DrawButtonAnimation(btnControles, controlsButton, mouse, scale);
+
+
+
+     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mouse, btnMenu))
+            {
+                *gameState = GAME_MENU;
+            }
+        if (CheckCollisionPointRec(mouse, btnVoltar)) 
+            {
+                *gameState = GAME_RUNNING;
+            }
+        if (CheckCollisionPointRec(mouse, btnControles))
+            {
+                *gameState = GAME_CONTROLS;
+            }
+        }
 
     EndDrawing();
 }

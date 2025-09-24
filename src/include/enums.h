@@ -2,7 +2,7 @@
 #define ENUMS_H  //o conteúdo do header só será incluído uma vez por arquivo fonte.
 
 typedef enum State {
-    GAME_START,
+    GAME_RESTART,
     GAME_MENU,
     GAME_RUNNING,
     GAME_PAUSED,

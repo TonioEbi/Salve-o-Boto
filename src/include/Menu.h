@@ -9,3 +9,5 @@ void unloadMenuAssets(void);
 void drawMainMenu(State *gameState);
 void drawMenuCredits(State *gameState);
 void drawMenuControls(State *gameState);
+void drawMenuGameOver(State *gameState);
+void drawMenuPause(State *gameState);

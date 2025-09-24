@@ -7,5 +7,6 @@
         "gamemechanics.h": "c",
         "stdlib.h": "c",
         "math.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
