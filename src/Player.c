@@ -112,6 +112,10 @@ void updatePlayer(Player *p, float delta){
         p->collision.y += p->speed.y * delta;
     }
 
+    if(p->oxygen >= 100){
+       p->oxygen = 100;
+    }
+
     //Border collision
     p->collision.x = fmin(fmax(0, p->collision.x), globalPixelWidth - p->collision.width);
     p->collision.y = fmin(fmax(globalWaterSurfaceHeight, p->collision.y), globalPixelHeight - p->collision.height);
