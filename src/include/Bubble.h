@@ -4,7 +4,7 @@
 
 typedef struct Bubble {
      
-    Rectangle size;
+    Rectangle collision;
     float speed;
     int oxyregen;
     bool pop; 

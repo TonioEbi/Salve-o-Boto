@@ -12,21 +12,21 @@
 
 #include "GameWindow.h"
 
-int main( void ) {
+int main(void) {
 
     GameWindow *gameWindow = createGameWindow(
-        800,                    // width
-        450,                    // height
+        640,                    // width
+        360,                    // height
         "Operação Aquapura",    // title
         60,                     // target FPS
         false,                  // antialiasing
-        true,                   // resizable
-        true,                   // full screen
+        false,                  // resizable
+        false,                  // full screen
         false,                  // undecorated
         false,                  // always on top
         false,                  // invisible background
         false,                  // always run
-        false,                  // load resources
+        true,                   // load resources
         false                   // init audio
     );
 

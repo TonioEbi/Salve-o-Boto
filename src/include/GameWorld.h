@@ -29,7 +29,7 @@ typedef struct GameWorld {
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
-GameWorld* createGameWorld( void );
+GameWorld* createGameWorld( State initialState );
 
 /**
  * @brief Destroys a GameWindow object and its dependecies.

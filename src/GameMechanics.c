@@ -7,8 +7,8 @@
 
 void checkCapture(Player* p, Npc* n){
     Rectangle netRec = {
-        p->size.x + (p->size.width - p->netSize.x) / 2,
-        p->size.y + (p->size.height - p->netSize.y) / 2,
+        p->collision.x + (p->collision.width - p->netSize.x) / 2,
+        p->collision.y + (p->collision.height - p->netSize.y) / 2,
         p->netSize.x,
         p->netSize.y
     };
@@ -18,7 +18,7 @@ void checkCapture(Player* p, Npc* n){
         default: netRec.x += p->netOffset;
     }
 
-    if(CheckCollisionRecs(netRec, n->size)) {
+    if(CheckCollisionRecs(netRec, n->collision)) {
         //Capture
         n->captured = true;
 
@@ -33,7 +33,7 @@ void checkCapture(Player* p, Npc* n){
 }
 
 void playerBubbleInteract(Player* p, Bubble* b){
-     if(CheckCollisionRecs(p->size, b->size) && !b->pop){
+     if(CheckCollisionRecs(p->collision, b->collision) && !b->pop){
         if(p->oxygen < 100){
             p->oxygen += 20;
             if(p->oxygen > 100){

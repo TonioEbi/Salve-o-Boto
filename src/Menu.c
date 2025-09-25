@@ -1,71 +1,28 @@
 #include "Menu.h"
-//Menus
-static Texture2D menuBg;
-static Texture2D menuCredits;
-static Texture2D menuControls;
-static Texture2D menuGameOver;
-static Texture2D menuPause;
+#include "GlobalVariables.h"
+#include "ResourceManager.h"
 
-//Botões
-static Texture2D controlsButton;
-static Texture2D playButton;
-static Texture2D creditsButton;
-static Texture2D backButton;
-static Texture2D menuButton;
-static Texture2D againButton;
-static Texture2D backButton2;
-
-
-
-void initMenuAssets(void) 
-{
-    //Menus
-    menuBg = LoadTexture("resources/images/menu_bg.png"); 
-    menuCredits = LoadTexture("resources/images/menu_crdts.png");
-    menuControls = LoadTexture("resources/images/menu_ctrls.png");
-    menuGameOver = LoadTexture("resources/images/menu_gmov.png");
-    menuPause = LoadTexture("resources/images/menu_pause.png");
-
-    //Botões
-    controlsButton = LoadTexture("resources/images/controles.png");
-    playButton = LoadTexture("resources/images/jogar.png");
-    creditsButton = LoadTexture("resources/images/creditos.png");
-    backButton = LoadTexture("resources/images/voltar.png");
-    menuButton = LoadTexture("resources/images/bt_menu.png");
-    againButton = LoadTexture("resources/images/denovo.png");
-    backButton2 = LoadTexture("resources/images/voltar2.png");
-    
-}
-
-void unloadMenuAssets(void) 
-{
-    UnloadTexture(menuBg);
-    UnloadTexture(menuControls);
-    UnloadTexture(menuCredits);
-    UnloadTexture(menuGameOver);
-    UnloadTexture(menuPause);
-
-    UnloadTexture(controlsButton);
-    UnloadTexture(playButton);
-    UnloadTexture(creditsButton);
-    UnloadTexture(menuButton);
-    UnloadTexture(againButton);
-    UnloadTexture(backButton2);
-
-}
+#include "GameWorld.h"
 
 //desenho e animacao dos botoes
 static void DrawButtonAnimation(Rectangle dimensions, Texture2D texture, Vector2 mouse, float scale) {
+    Rectangle source = {0, 0, (float)texture.width, (float)texture.height};
     if (CheckCollisionPointRec(mouse, dimensions)) {
         Rectangle scaledDest = {
-            dimensions.x - (dimensions.width * (scale - 1.0f) / 2.0f),
-            dimensions.y - (dimensions.height * (scale - 1.0f) / 2.0f),
+            (dimensions.x - (dimensions.width * (scale - 1.0f) / 2.0f)),
+            (dimensions.y - (dimensions.height * (scale - 1.0f) / 2.0f)),
             dimensions.width * scale,
             dimensions.height * scale
         };
-        DrawTexturePro(texture, (Rectangle){ 0, 0, (float)texture.width, (float)texture.height }, scaledDest, (Vector2){ 0, 0 }, 0.0f, WHITE);
+        DrawTexturePro(texture, source, scaledDest, (Vector2){ 0, 0 }, 0.0f, WHITE);
     } else {
-        DrawTexture(texture, (int)dimensions.x, (int)dimensions.y, WHITE);
+        Rectangle dest = {
+            dimensions.x,
+            dimensions.y,
+            dimensions.width,
+            dimensions.height
+        };
+        DrawTexturePro(texture, source, dest, (Vector2){ 0, 0 }, 0.0f, WHITE);
     }
 }
 
@@ -74,20 +31,27 @@ void drawMainMenu(State *gameState)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTexture(menuBg, 0, 0, WHITE);
+    DrawTexturePro (
+        rm.menuBg,
+        (Rectangle){0, 0, (float)rm.menuBg.width, (float)rm.menuBg.height},
+        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE
+    );
      
-    //area dos botoes 
-    Rectangle btnControles = { 105, 305, 182, 63 };
-    Rectangle btnJogar = { 309, 305, 182, 63 };
-    Rectangle btnCreditos  = { 514, 305, 182, 63 };
+    //area dos botoes
+    Rectangle btnControles = { 42 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
+    Rectangle btnJogar = { 123 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
+    Rectangle btnCreditos  = { 204 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
 
     Vector2 mouse = GetMousePosition();
     float scale = 1.1f;
 
     //animacao dos botoes
-    DrawButtonAnimation(btnJogar, playButton, mouse, scale);
-    DrawButtonAnimation(btnCreditos, creditsButton, mouse, scale);
-    DrawButtonAnimation(btnControles, controlsButton, mouse, scale);
+    DrawButtonAnimation(btnJogar, rm.playButton, mouse, scale);
+    DrawButtonAnimation(btnCreditos, rm.creditsButton, mouse, scale);
+    DrawButtonAnimation(btnControles, rm.controlsButton, mouse, scale);
 
 
     //detecta clique e muda estado do jogo
@@ -102,7 +66,7 @@ void drawMainMenu(State *gameState)
             }
         if (CheckCollisionPointRec(mouse, btnControles))
             {
-                *gameState = GAME_CONTROLS;
+                *gameState = GAME_MENU_CONTROLS;
             }
         }
     
@@ -115,12 +79,19 @@ void drawMenuCredits(State *gameState)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTexture(menuCredits, 0, 0, WHITE);
+    DrawTexturePro (
+        rm.menuCredits,
+        (Rectangle){0, 0, (float)rm.menuCredits.width, (float)rm.menuCredits.height},
+        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE
+    );
      
-    Rectangle btnVoltar = { 22, 17, (float)backButton.width, (float)backButton.height};
+    Rectangle btnVoltar = {9 * currentWindowScale, 7 * currentWindowScale, 23 * currentWindowScale, 23 * currentWindowScale};
     Vector2 mouse = GetMousePosition();
     float scale = 1.1f;
-    DrawButtonAnimation(btnVoltar, backButton, mouse, scale);
+    DrawButtonAnimation(btnVoltar, rm.backButton, mouse, scale);
 
      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mouse, btnVoltar))
@@ -137,17 +108,29 @@ void drawMenuControls(State *gameState)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    DrawTexture(menuControls, 0, 0, WHITE);
+    DrawTexturePro (
+        rm.menuControls,
+        (Rectangle){0, 0, (float)rm.menuControls.width, (float)rm.menuControls.height},
+        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE
+    );
      
-    Rectangle btnVoltar = { 22, 17, (float)backButton.width, (float)backButton.height};
+    Rectangle btnVoltar = {9 * currentWindowScale, 7 * currentWindowScale, 23 * currentWindowScale, 23 * currentWindowScale};
     Vector2 mouse = GetMousePosition();
     float scale = 1.1f;
-    DrawButtonAnimation(btnVoltar, backButton, mouse, scale);
+    DrawButtonAnimation(btnVoltar, rm.backButton, mouse, scale);
 
-     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnVoltar))
-        {
-            *gameState = GAME_MENU;
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if(CheckCollisionPointRec(mouse, btnVoltar)) {
+            //Ensures the player doesn't go back to the main menu unintentionally
+            if(*gameState == GAME_PAUSE_CONTROLS) {
+                *gameState = GAME_PAUSED;
+            }
+            else {
+                *gameState = GAME_MENU;
+            }
         }
     }
 
@@ -158,29 +141,36 @@ void drawMenuGameOver( State *gameState) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     
-    DrawTexture(menuGameOver, 0, 0, WHITE);
+    DrawTexturePro (
+        rm.menuGameOver,
+        (Rectangle){0, 0, (float)rm.menuGameOver.width, (float)rm.menuGameOver.height},
+        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE
+    );
 
-    Rectangle btnMenu = { 105, 305, 182, 63 };
-    Rectangle btnAgain  = { 514, 305, 182, 63 };
+    Rectangle btnMenu = { 42 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
+    Rectangle btnAgain  = { 204 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
 
     Vector2 mouse = GetMousePosition();
     float scale = 1.1f;
 
-    DrawButtonAnimation(btnAgain, againButton, mouse, scale);
-    DrawButtonAnimation(btnMenu, menuButton, mouse, scale);
+    DrawButtonAnimation(btnAgain, rm.againButton, mouse, scale);
+    DrawButtonAnimation(btnMenu, rm.menuButton, mouse, scale);
 
 
      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mouse, btnAgain))
         {
-            *gameState = GAME_RUNNING;
+            *gameState = GAME_RUNNING_RESET;
         }
     }
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mouse, btnMenu))
         {
-            *gameState = GAME_MENU;
+            *gameState = GAME_MENU_RESET;
             
         }
     }
@@ -191,27 +181,30 @@ void drawMenuGameOver( State *gameState) {
 void drawMenuPause( State *gameState) {
     BeginDrawing();
     
-    DrawTexture(menuPause, 0, 0, WHITE);
+    DrawTexturePro (
+        rm.menuPause,
+        (Rectangle){0, 0, (float)rm.menuPause.width, (float)rm.menuPause.height},
+        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+        (Vector2){0, 0},
+        0.0f,
+        WHITE
+    );
 
-    Rectangle btnMenu  = { 514, 305, 182, 63 };
-    Rectangle btnVoltar = { 309, 305, 182, 63 };
-    Rectangle btnControles = { 105, 305, 182, 63 };
-
-
+    Rectangle btnControles = { 42 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
+    Rectangle btnVoltar = { 123 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
+    Rectangle btnMenu  = { 204 * currentWindowScale, 121 * currentWindowScale, 72 * currentWindowScale, 25 * currentWindowScale };
 
     Vector2 mouse = GetMousePosition();
     float scale = 1.1f;
 
-    DrawButtonAnimation(btnMenu, menuButton, mouse, scale);
-    DrawButtonAnimation(btnVoltar, backButton2, mouse, scale);
-    DrawButtonAnimation(btnControles, controlsButton, mouse, scale);
-
-
+    DrawButtonAnimation(btnMenu, rm.menuButton, mouse, scale);
+    DrawButtonAnimation(btnVoltar, rm.backButton2, mouse, scale);
+    DrawButtonAnimation(btnControles, rm.controlsButton, mouse, scale);
 
      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mouse, btnMenu))
             {
-                *gameState = GAME_MENU;
+                *gameState = GAME_MENU_RESET;
             }
         if (CheckCollisionPointRec(mouse, btnVoltar)) 
             {
@@ -219,7 +212,7 @@ void drawMenuPause( State *gameState) {
             }
         if (CheckCollisionPointRec(mouse, btnControles))
             {
-                *gameState = GAME_CONTROLS;
+                *gameState = GAME_PAUSE_CONTROLS;
             }
         }
 

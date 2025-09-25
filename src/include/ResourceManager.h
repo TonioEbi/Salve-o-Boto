@@ -10,9 +10,31 @@
 #include "raylib/raylib.h"
 
 typedef struct ResourceManager {
-    Texture2D textureExample;
-    Sound soundExample;
-    Music musicExample;
+    //Player
+    Texture2D player;
+
+    //NPCs
+    Texture2D animalArray[10];
+    Texture2D enemyArray[10];
+
+    //Menus
+    Texture2D menuBg; 
+    Texture2D menuCredits;
+    Texture2D menuControls;
+    Texture2D menuGameOver;
+    Texture2D menuPause;
+
+    //Botões
+    Texture2D controlsButton;
+    Texture2D playButton;
+    Texture2D creditsButton;
+    Texture2D backButton;
+    Texture2D menuButton;
+    Texture2D againButton;
+    Texture2D backButton2;
+
+    //Sound soundExample;
+    //Music musicExample;
 } ResourceManager;
 
 /**

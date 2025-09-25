@@ -1,7 +1,11 @@
-#include "raylib/raylib.h"
-#include <stdbool.h>
-#include "Npc.h"
 #include <stdlib.h>
+#include <stdbool.h>
+
+#include "raylib/raylib.h"
+
+#include "Npc.h"
+#include "GlobalVariables.h"
+#include "ResourceManager.h"
 
 Npc* createNpc(void){ //creates the npc with the starting values
     Npc *n = (Npc*)malloc(sizeof(Npc));
@@ -9,36 +13,61 @@ Npc* createNpc(void){ //creates the npc with the starting values
         return NULL;
     }
 
-    n->size.width = 45;
-    n->size.height = 15;
-    n->speed = 150;
+    n->collision.width = 16;
+    n->collision.height = 8;
+    n->speed = 60;
 
-   /*
-    //Creates the NPC from the left or right side of the screen
-    int dir = GetRandomValue(0, 1);
-    if(dir == 0) {
-        n->size.x = -n->size.width;
-    }
-    else {
-        n->size.x = GetScreenWidth();
-        n->speed *= -1;
-    }
-*/
-    n->size.x = GetScreenWidth();
-    n->size.y = GetRandomValue((GetScreenHeight() - n->size.height), GetScreenHeight() / 3);
+    n->collision.x = globalPixelWidth;
+    n->collision.y = GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
     n->captured = false;
     n->enemy = GetRandomValue(0, 1);
+    n->variant = GetRandomValue(0, 10);
 
     return n;
 }
 
 void drawNpc(Npc* n){ //draws the npc
-    if(n->enemy){
-        DrawRectangle(n->size.x, n->size.y, n->size.width, n->size.height, RED);
-    }else{
-        DrawRectangle(n->size.x, n->size.y, n->size.width, n->size.height, GREEN);
+    /*
+    Descomente quando for colocar as texturas dos npcs
+
+    Texture2D texture;
+    if(n->type) {
+        texture = rm.enemyArray[n->variant];
     }
-    
+    else {
+        texture = rm.animalArray[n->variant];
+    }
+
+    Rectangle source = {0, 0, 16, 16};
+    Rectangle dest = {
+        (p->collision.x + p->collision.width / 2) * currentWindowScale,
+        (p->collision.y + p->collision.height / 2) * currentWindowScale,
+        source.width * currentWindowScale,
+        source.height * currentWindowScale
+    };
+    Vector2 offset = {8 * currentWindowScale, 8 * currentWindowScale};
+
+    DrawTexturePro(texture, source, dest, offset, 0, WHITE);
+
+    */
+
+    if(n->enemy){
+        DrawRectangle(
+            n->collision.x * currentWindowScale,
+            n->collision.y * currentWindowScale,
+            n->collision.width * currentWindowScale,
+            n->collision.height * currentWindowScale,
+            RED
+        );
+    }else{
+        DrawRectangle(
+            n->collision.x * currentWindowScale,
+            n->collision.y * currentWindowScale,
+            n->collision.width * currentWindowScale,
+            n->collision.height * currentWindowScale,
+            GREEN
+        );
+    }
 }
 
 void updateNpc(Npc *n, float delta){ //update the npc position and state
@@ -46,6 +75,6 @@ void updateNpc(Npc *n, float delta){ //update the npc position and state
         n = NULL;
     }
     else {
-        n->size.x -= n->speed * delta;
+        n->collision.x -= n->speed * delta;
     }
 }

@@ -1,13 +1,10 @@
 #pragma once
 #include "raylib/raylib.h"
 
-typedef enum Direction {
-    LEFT,
-    RIGHT
-} Direction;
+#include "enums.h"
 
 typedef struct Player {
-    Rectangle size;
+    Rectangle collision;
     int oxygen;
     float damageCooldown;
     Vector2 speed;
@@ -16,7 +13,6 @@ typedef struct Player {
     int netOffset;
     Vector2 netSize;
     Direction lastDir;
-    Texture2D playerSpr;
 } Player;
 
 Player* createPlayer(void);

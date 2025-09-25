@@ -1,36 +1,45 @@
-#include "raylib/raylib.h"
-#include <stdbool.h>
-#include "Bubble.h"
 #include <stdlib.h>
+#include <stdbool.h>
+
+#include "raylib/raylib.h"
+
+#include "Bubble.h"
+#include "GlobalVariables.h"
+#include "ResourceManager.h"
 
 Bubble* createBubble(void){
     Bubble *b = (Bubble*)malloc(sizeof(Bubble));
     if (b == NULL) {
         return NULL;
     }
-
-    b->size.x = GetRandomValue(GetScreenWidth()/2, GetScreenWidth() - b->size.width);
-    b->size.width = 45;
-    b->size.height = 45;
-    b->speed = 171;
-    b->oxyregen = 25;
-    b->size.y = GetScreenHeight();
-    b->pop = false;
-    
-    return b;
+    else {
+        b->collision.width = 16;
+        b->collision.height = 16;
+        b->speed = 68;
+        b->oxyregen = 25;
+        b->collision.x = GetRandomValue(globalPixelWidth / 2, globalPixelWidth - b->collision.width);
+        b->collision.y = globalPixelHeight;
+        b->pop = false;
+        
+        return b;
+    }
 }
 
 void drawBubble(Bubble* b){
-     
-    DrawRectangle(b->size.x, b->size.y, b->size.width, b->size.height, BLUE);           
-
+    DrawRectangle(
+        b->collision.x * currentWindowScale,
+        b->collision.y * currentWindowScale,
+        b->collision.width * currentWindowScale,
+        b->collision.height * currentWindowScale,
+        BLUE
+    );
 }
 
 void updateBubble(Bubble *b, float delta){
 
-     b->size.y -= b->speed * delta;
+     b->collision.y -= b->speed * delta;
 
-     if(b->size.y < GetScreenHeight()/3){
+     if(b->collision.y < globalWaterSurfaceHeight){
 
         b->pop = true;
     }

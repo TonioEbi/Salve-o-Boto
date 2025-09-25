@@ -3,10 +3,11 @@
 #include <stdbool.h>
 
 typedef struct Npc {
-    Rectangle size;
+    Rectangle collision;
     float speed;
     bool captured;
     bool enemy;
+    int variant;
 }Npc;
 
 Npc* createNpc(void);

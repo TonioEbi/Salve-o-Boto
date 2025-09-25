@@ -9,10 +9,11 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "GameWorld.h"
-#include "ResourceManager.h"
-
 #include "raylib/raylib.h"
+
+#include "GameWorld.h"
+#include "GlobalVariables.h"
+#include "ResourceManager.h"
 
 #include "Player.h"
 #include "Npc.h"
@@ -27,7 +28,7 @@
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
-GameWorld* createGameWorld( void ) { //inicialize the gameworld with the inicial values
+GameWorld* createGameWorld( State initialState ) { //initialize the gameworld with the initial values
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
@@ -44,7 +45,7 @@ GameWorld* createGameWorld( void ) { //inicialize the gameworld with the inicial
     gw->lastSec = 0;
     gw->BubbleTimer = 0;
     gw->activeBubble = 0;
-    gw->gameState = GAME_RUNNING;
+    gw->gameState = initialState;
     return gw;
 
 }
@@ -68,19 +69,12 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
     updatePlayer( gw->player, delta );
-    
-    for(int i = 0; i < MAX_BUBBLE; i++){
-        if(gw->bubble[i] != NULL){
-            updateBubble(gw->bubble[i], delta);
-            playerBubbleInteract(gw->player, gw->bubble[i]);
-        }
-                    //pause
-    if(gw->gameState == GAME_RUNNING){
-    if(IsKeyPressed(KEY_P)){
-    gw->gameState = GAME_PAUSED;
-    }
-    }
 
+    //Pause function
+    if(gw->gameState == GAME_RUNNING){
+        if(IsKeyPressed(KEY_P)){
+            gw->gameState = GAME_PAUSED;
+        }
     }
 
     //timer logic that controls the enemies spawn
@@ -100,25 +94,6 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             }
         }
 
-
-        //Oxygen control
-        if(gw->player->oxygen > 0){
-            if(gw->player->size.y == GetScreenHeight() / 3) {
-                if(gw->player->oxygen < 100){
-                    gw->player->oxygen = fmin(gw->player->oxygen + 2, 100);
-                }
-            }
-            else if(gw->player->size.y + gw->player->size.height / 2 < (GetScreenHeight() * 2 / 3)) {
-                gw->player->oxygen -= 3;
-            }
-            else {
-                gw->player->oxygen -= 6;
-            }
-        }
-        else{
-            gw->gameState = GAME_OVER;
-        }
-
         if(gw->BubbleTimer % 6 == 0){
             if(gw->activeBubble < MAX_BUBBLE){
             for (int i = 0; i < MAX_BUBBLE; i++){
@@ -132,9 +107,26 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             }
         }
 
+        //Oxygen control
+        if(gw->player->oxygen > 0){
+            if(gw->player->collision.y == globalWaterSurfaceHeight) {
+                if(gw->player->oxygen < 100){
+                    gw->player->oxygen = fmin(gw->player->oxygen + 2, 100);
+                }
+            }
+            else if(gw->player->collision.y + gw->player->collision.height / 2 < (GetScreenHeight() * 2 / 3)) {
+                gw->player->oxygen -= 3;
+            }
+            else {
+                gw->player->oxygen -= 6;
+            }
+        }
+        else{
+            gw->gameState = GAME_OVER;
+        }
     }
 
-   
+    //Update all NPCs
     for (int i = 0; i < MAX_NPC; i++) {
         if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
             updateNpc(gw->npc[i], delta);
@@ -148,14 +140,21 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             //Only deal damage to the player if the cooldown is 0
             if(gw->player->damageCooldown == 0) {
                 //Checks if the NPC collided with the player
-                if(CheckCollisionRecs(gw->player->size, gw->npc[i]->size)){
+                if(CheckCollisionRecs(gw->player->collision, gw->npc[i]->collision)){
                     gw->player->damageCooldown = 1;
                     gw->player->oxygen -= 10;
                 }
             }
         }
     }
-
+    
+    //Update all bubbles
+    for(int i = 0; i < MAX_BUBBLE; i++){
+        if(gw->bubble[i] != NULL){
+            updateBubble(gw->bubble[i], delta);
+            playerBubbleInteract(gw->player, gw->bubble[i]);
+        }
+    }
 }
 
 
@@ -178,12 +177,10 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     for(int i = 0; i < MAX_BUBBLE; i++){
       if(gw->bubble[i] != NULL && !gw->bubble[i]->pop){
          drawBubble(gw->bubble[i]);
-
         }
-        
     }
     
-    DrawLine(0, GetScreenHeight() / 3, GetScreenWidth(), GetScreenHeight() / 3, BLUE);
+    DrawLine(0, globalWaterSurfaceHeight * currentWindowScale, GetScreenWidth(), globalWaterSurfaceHeight * currentWindowScale, BLUE);
 
     drawOxygenBar(gw->player);
 
