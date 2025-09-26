@@ -10,7 +10,7 @@ typedef struct Npc {
     int variant;
 }Npc;
 
-Npc* createNpc(void);
+Npc* createNpc(float speed);
 
 void drawNpc(Npc* n);
 

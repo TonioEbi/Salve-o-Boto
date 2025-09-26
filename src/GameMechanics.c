@@ -1,11 +1,13 @@
 #include "Player.h"
 #include "Npc.h"
+#include "GameWorld.h"
+#include "GlobalVariables.h"
 #include <stdbool.h>
 #include "GameMechanics.h"
 #include "raylib/raylib.h"
 #include <stdio.h>
 
-void checkCapture(Player* p, Npc* n){
+void checkCapture(GameWorld *gw, Player* p, Npc* n){
     Rectangle netRec = {
         p->collision.x + (p->collision.width - p->netSize.x) / 2,
         p->collision.y + (p->collision.height - p->netSize.y) / 2,
@@ -26,6 +28,7 @@ void checkCapture(Player* p, Npc* n){
         if(n->enemy){ 
             p->score++;
             p->oxygen += 10;
+            gw->caughtEnemies++;
         }else{
             p->oxygen -=10; 
         }

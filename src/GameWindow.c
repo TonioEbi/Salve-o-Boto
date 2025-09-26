@@ -93,12 +93,22 @@ void initGameWindow(GameWindow *gameWindow) {
             loadResourcesResourceManager();
         }
 
+        PlayMusicStream(rm.bg_tune);
+        SetMusicVolume(rm.bg_tune, 1.0f);
+
         //Main game loop
         while (!WindowShouldClose()) {
+
+            UpdateMusicStream(rm.bg_tune);
+
             switch (gameWindow->gw->gameState) 
             {
                 case GAME_MENU:
+                    drawMainMenu(&gameWindow->gw->gameState);                    
+                    SetMusicVolume(rm.bg_tune, 0.2f); //
+                    SetMusicPitch(rm.bg_tune, 1.0f);
                     drawMainMenu(&gameWindow->gw->gameState);
+                    
                     break;
 
                 case GAME_CREDITS:
@@ -106,6 +116,11 @@ void initGameWindow(GameWindow *gameWindow) {
                     break;
 
                 case GAME_RUNNING:
+                    updateGameWorld(gameWindow->gw, GetFrameTime());
+                    drawGameWorld(gameWindow->gw);
+                    
+                    SetMusicVolume(rm.bg_tune, 1.0f); // Normal volume during gameplay
+                    SetMusicPitch(rm.bg_tune, 1.0f);
                     updateGameWorld(gameWindow->gw, GetFrameTime());
                     drawGameWorld(gameWindow->gw);
                     break;
@@ -123,6 +138,9 @@ void initGameWindow(GameWindow *gameWindow) {
                     break;
 
                 case GAME_PAUSED:
+                    drawMenuPause(&gameWindow->gw->gameState);
+                    SetMusicVolume(rm.bg_tune, 0.2f); // Muffled volume
+                    SetMusicPitch(rm.bg_tune, 0.5f); // Slightly lower pitch
                     drawMenuPause(&gameWindow->gw->gameState);
                     break;
 

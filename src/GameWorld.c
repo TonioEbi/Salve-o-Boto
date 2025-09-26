@@ -20,6 +20,8 @@
 #include "Bubble.h"
 #include "GameMechanics.h"
 
+
+
 //#include "raylib/raymath.h"
 //#define RAYGUI_IMPLEMENTATION    // to use raygui, comment these three lines.
 //#include "raylib/raygui.h"       // other compilation units must only include
@@ -31,6 +33,8 @@
 GameWorld* createGameWorld( State initialState ) { //initialize the gameworld with the initial values
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
+    
+    
 
     gw->player = createPlayer();
     for(int i = 0; i < MAX_NPC; i++){
@@ -41,11 +45,16 @@ GameWorld* createGameWorld( State initialState ) { //initialize the gameworld wi
     }
     gw->activeNpc = 0;
     gw->timer = 0.0f;
+    gw->spawnTimer = 0.0f;
+    gw->spawnInterval = INITIAL_SPAWN_INTERVAL;
     gw->timeCount = 0;
     gw->lastSec = 0;
     gw->BubbleTimer = 0;
     gw->activeBubble = 0;
     gw->gameState = initialState;
+    gw->escapedEnemies = 0;
+    gw->caughtEnemies = 0;
+    gw->npcSpeed = 60;
     return gw;
 
 }
@@ -68,6 +77,7 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
  */
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
+    gw->spawnTimer += delta;
     updatePlayer( gw->player, delta );
 
     //Pause function
@@ -79,20 +89,40 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
 
     //timer logic that controls the enemies spawn
     int currentSec = (int)gw->timer;
+   
 
     if (currentSec > gw->lastSec) {
         gw->timeCount++;
         gw->BubbleTimer++;
         gw->lastSec = currentSec;
+
+        //Npc spawn logic
+        if(gw->spawnTimer >= gw->spawnInterval){
+            gw->spawnTimer = 0.0f;
+
         if (gw->activeNpc < MAX_NPC) {
             for (int i = 0; i < MAX_NPC; i++) {
                 if (gw->npc[i] == NULL) {
-                    gw->npc[i] = createNpc();
+                    gw->npc[i] = createNpc(gw->npcSpeed);
                     gw->activeNpc++;
                     break;                   
                 }
             }
         }
+    }
+        
+
+
+        // Increase the speed and decrease spawn interval of the game if x enemies escape/are captured
+      if (gw->escapedEnemies >= ENEMY_ESCAPE_LIMIT || gw->caughtEnemies >= ENEMY_CAUGHT_LIMIT) {
+        gw->npcSpeed += 4;
+        gw->npcSpeed = fmin(gw->npcSpeed, MAX_NPC_SPEED);
+        gw->spawnInterval = fmax(gw->spawnInterval - SPAWN_DECREMENT, MIN_SPAWN_INTERVAL);
+
+        // Reset the counters
+        gw->escapedEnemies = 0;
+        gw->caughtEnemies = 0;
+    }
 
         if(gw->BubbleTimer % 6 == 0){
             if(gw->activeBubble < MAX_BUBBLE){
@@ -127,14 +157,31 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
     }
 
     //Update all NPCs
+
     for (int i = 0; i < MAX_NPC; i++) {
-        if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
+
+        //if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
+        if (gw->npc[i] != NULL) {
             updateNpc(gw->npc[i], delta);
+
+        //Checks if the npc has escaped or been captured
+            if(gw->npc[i]->collision.x <= 0 || gw->npc[i]->captured) {
+                if (gw->npc[i]->enemy && gw->npc[i]->collision.x <= 0){
+                    gw->escapedEnemies++;
+                }
+
+                free(gw->npc[i]);
+                gw->npc[i] = NULL;
+                gw->activeNpc--;
+
+                continue;   
+            }
+            
 
             //Checks if the player is currently using the net
             if(gw->player->netTimer > 0.1) {
                 //Checks if the NPC was captured
-                checkCapture(gw->player, gw->npc[i]);
+                checkCapture(gw, gw->player, gw->npc[i]);
             }
 
             //Only deal damage to the player if the cooldown is 0
@@ -142,7 +189,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
                 //Checks if the NPC collided with the player
                 if(CheckCollisionRecs(gw->player->collision, gw->npc[i]->collision)){
                     gw->player->damageCooldown = 1;
-                    gw->player->oxygen -= 10;
+                    gw->player->oxygen -= 15;
                 }
             }
         }

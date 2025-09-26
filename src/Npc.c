@@ -7,7 +7,7 @@
 #include "GlobalVariables.h"
 #include "ResourceManager.h"
 
-Npc* createNpc(void){ //creates the npc with the starting values
+Npc* createNpc(float speed){ //creates the npc with the starting values
     Npc *n = (Npc*)malloc(sizeof(Npc));
     if (n == NULL) {
         return NULL;
@@ -15,7 +15,7 @@ Npc* createNpc(void){ //creates the npc with the starting values
 
     n->collision.width = 16;
     n->collision.height = 8;
-    n->speed = 60;
+    n->speed = speed;
 
     n->collision.x = globalPixelWidth;
     n->collision.y = GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);

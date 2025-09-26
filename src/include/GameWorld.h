@@ -10,20 +10,35 @@
 #include "Npc.h"
 #include "enums.h"
 #include "Bubble.h"
+
+//Definitions
+#define ENEMY_ESCAPE_LIMIT 5
+#define ENEMY_CAUGHT_LIMIT 15
+#define MAX_NPC_SPEED 250
 #define MAX_NPC 10000
 #define MAX_BUBBLE 10000
+#define INITIAL_SPAWN_INTERVAL 1.0f
+#define MIN_SPAWN_INTERVAL 0.25f
+#define SPAWN_DECREMENT 0.025f
+
+
 
 typedef struct GameWorld {
     Player *player;
     Npc *npc[MAX_NPC];
     int activeNpc;
     float timer;
+    float spawnTimer;
+    float spawnInterval;
     int timeCount;
     int lastSec;
     int BubbleTimer;
     int activeBubble;
     Bubble *bubble[MAX_BUBBLE];
     State gameState;
+    int escapedEnemies;
+    int caughtEnemies;
+    int npcSpeed;
 } GameWorld;
 
 /**

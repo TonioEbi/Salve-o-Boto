@@ -12,6 +12,8 @@
 
 #include "GameWindow.h"
 
+GameWorld *gw;
+
 int main(void) {
 
     GameWindow *gameWindow = createGameWindow(
@@ -27,7 +29,7 @@ int main(void) {
         false,                  // invisible background
         false,                  // always run
         true,                   // load resources
-        false                   // init audio
+        true                   // init audio
     );
 
     initGameWindow( gameWindow );

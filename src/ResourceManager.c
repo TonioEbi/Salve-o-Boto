@@ -81,5 +81,6 @@ void unloadResourcesResourceManager(void) {
     UnloadTexture(rm.backButton2);
 
     //UnloadSound( rm.soundExample );
-    //UnloadMusicStream( rm.musicExample );
+    
+    UnloadMusicStream( rm.bg_tune );
 }
