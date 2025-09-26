@@ -16,7 +16,8 @@ ResourceManager rm = {0};
 
 void loadResourcesResourceManager(void) {
     //Player
-    rm.player = LoadTexture( "resources/images/diver.png" );
+    rm.player = LoadTexture( "resources/images/sprites/diver.png" );
+    rm.oxyTank = LoadTexture( "resources/images/sprites/tank.png");
 
     /*
     Descomente quando for colocar as texturas dos animais e do lixo
@@ -55,12 +56,14 @@ void loadResourcesResourceManager(void) {
     rm.backButton2 = LoadTexture("resources/images/ui/voltar2.png");
 
     //rm.soundExample = LoadSound( "resources/sfx/powerUp.wav" );
-    //rm.musicExample = LoadMusicStream( "resources/musics/overworld1.ogg" );
+    
+    rm.bg_tune = LoadMusicStream( "resources/musics/Hydrodinamics.mp3" );
 }
 
 void unloadResourcesResourceManager(void) {
     //Player
     UnloadTexture(rm.player);
+    UnloadTexture(rm.oxyTank);
 
     //Menus
     UnloadTexture(rm.menuBg);

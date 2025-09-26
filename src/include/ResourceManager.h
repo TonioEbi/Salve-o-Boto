@@ -12,6 +12,7 @@
 typedef struct ResourceManager {
     //Player
     Texture2D player;
+    Texture2D oxyTank;
 
     //NPCs
     Texture2D animalArray[10];
@@ -34,7 +35,9 @@ typedef struct ResourceManager {
     Texture2D backButton2;
 
     //Sound soundExample;
-    //Music musicExample;
+    
+    Music bg_tune;
+    
 } ResourceManager;
 
 /**

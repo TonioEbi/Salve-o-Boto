@@ -121,12 +121,51 @@ void updatePlayer(Player *p, float delta){
     p->collision.y = fmin(fmax(globalWaterSurfaceHeight, p->collision.y), globalPixelHeight - p->collision.height);
 }
 
+
 void drawOxygenBar(Player *p){
+
+    int barWidth = 100;
+    int barHeight = 10;
+    int barX = 8;
+    int barY = 8;
+
+    // Change color of the bar based on the oxygen levels
+    Color startColor;
+    Color endColor;
+    float lerpAmount = 0.0f;
+
+    //Blending from green to yellow
+    if(p->oxygen > 50){
+        startColor = YELLOW;
+        endColor = GREEN;
+        lerpAmount = (p->oxygen - 50.0f) / 50.0f;
+    } 
+    //Blending from yellow to red
+        else{
+            startColor = RED;
+            endColor = YELLOW;
+            lerpAmount = p->oxygen / 50.0f;
+    }
+
+    Color finalColor = ColorLerp(startColor, endColor, lerpAmount);
+        
     DrawRectangle(
-        8 * currentWindowScale,
-        8 * currentWindowScale,
+        barX * currentWindowScale,
+        barY * currentWindowScale,
         p->oxygen * currentWindowScale,
-        10 * currentWindowScale,
-        DARKGREEN
+        barHeight * currentWindowScale,
+        finalColor
     );
+    
+    // Draw the the tank on top of the bar
+    Rectangle source = {0, 0, rm.oxyTank.width, rm.oxyTank.height};
+    Rectangle dest = {
+        barX * currentWindowScale,
+        barY * currentWindowScale,
+        rm.oxyTank.width * currentWindowScale,
+        rm.oxyTank.height * currentWindowScale
+    };
+
+    DrawTexturePro(rm.oxyTank, source, dest, (Vector2){0, 0}, 0, WHITE);
 }
+    
