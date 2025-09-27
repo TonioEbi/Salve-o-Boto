@@ -8,7 +8,6 @@ typedef struct Player {
     int oxygen;
     float damageCooldown;
     Vector2 speed;
-    int score;
     float netTimer;
     int netOffset;
     Vector2 netSize;

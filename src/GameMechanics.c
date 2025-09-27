@@ -26,7 +26,7 @@ void checkCapture(GameWorld *gw, Player* p, Npc* n){
 
         //If the NPC is an enemy, the player scores. Otherwise, the player is punished.
         if(n->enemy){ 
-            p->score++;
+            score++;
             p->oxygen += 10;
             gw->caughtEnemies++;
         }else{

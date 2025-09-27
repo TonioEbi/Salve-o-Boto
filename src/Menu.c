@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 
 #include "GameWorld.h"
+#include "Scoreboard.h"
 
 //desenho e animacao dos botoes
 static void DrawButtonAnimation(Rectangle dimensions, Texture2D texture, Vector2 mouse, float scale) {
@@ -158,6 +159,7 @@ void drawMenuGameOver( State *gameState) {
 
     DrawButtonAnimation(btnAgain, rm.againButton, mouse, scale);
     DrawButtonAnimation(btnMenu, rm.menuButton, mouse, scale);
+    drawScoreboard(GAME_OVER);
 
 
      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {

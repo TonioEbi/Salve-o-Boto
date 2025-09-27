@@ -21,7 +21,6 @@ Player * createPlayer(void){   // creates the player with the inicial settings
     p->oxygen = 100;
     p->speed.x = 120;
     p->speed.y = 120;
-    p->score = 0;
     p->netTimer = 0;
     p->netOffset = 48;
     p->netSize = (Vector2){48, 48};
