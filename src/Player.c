@@ -18,7 +18,8 @@ Player * createPlayer(void){   // creates the player with the inicial settings
     p->collision.height = 24;
     p->collision.x = (globalPixelWidth - p->collision.width) / 2.0f ;
     p->collision.y = globalPixelHeight * 0.6f;
-    p->oxygen = 100;
+    p->oxygen = MAX_OXYGEN;
+    p->damageCooldown = 0;
     p->speed.x = 120;
     p->speed.y = 120;
     p->netTimer = 0;
@@ -143,16 +144,16 @@ void drawOxygenBar(Player *p){
     float lerpAmount = 0.0f;
 
     //Blending from green to yellow
-    if(p->oxygen > 50){
+    if(p->oxygen > 50) {
         startColor = YELLOW;
         endColor = GREEN;
         lerpAmount = (p->oxygen - 50.0f) / 50.0f;
     } 
     //Blending from yellow to red
-        else{
-            startColor = RED;
-            endColor = YELLOW;
-            lerpAmount = p->oxygen / 50.0f;
+    else {
+        startColor = RED;
+        endColor = YELLOW;
+        lerpAmount = p->oxygen / 50.0f;
     }
 
     Color finalColor = ColorLerp(startColor, endColor, lerpAmount);
@@ -160,7 +161,7 @@ void drawOxygenBar(Player *p){
     DrawRectangle(
         barX * currentWindowScale,
         barY * currentWindowScale,
-        (int)p->oxygen * currentWindowScale,
+        round(p->oxygen) * currentWindowScale,
         barHeight * currentWindowScale,
         finalColor
     );
