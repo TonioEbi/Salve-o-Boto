@@ -1,9 +1,14 @@
 #pragma once
+
+#include <stdbool.h>
+#include "GameWorld.h"
 #include "Player.h"
 #include "Npc.h"
-#include "Bubble.h"
-#include <stdbool.h>
 
-void checkCapture(GameWorld *gw, Player* p, Npc* n);
+void checkNpcCollision(Player* p, Npc* n);
 
-void playerBubbleInteract(Player* p, Bubble* b);
+void checkNpcCapture(GameWorld *gw, Player* p, Npc* n);
+
+void awardCollisionBonus(Player* p, Npc* n);
+
+void awardCaptureBonus(Player* p, Npc* n);

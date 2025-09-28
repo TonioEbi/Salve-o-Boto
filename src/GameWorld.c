@@ -17,7 +17,6 @@
 
 #include "Player.h"
 #include "Npc.h"
-#include "Bubble.h"
 #include "GameMechanics.h"
 #include "Scoreboard.h"
 
@@ -34,15 +33,10 @@
 GameWorld* createGameWorld( State initialState ) { //initialize the gameworld with the initial values
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
-    
-    
 
     gw->player = createPlayer();
     for(int i = 0; i < MAX_NPC; i++){
         gw->npc[i] = NULL;
-    }
-    for(int i = 0; i < MAX_BUBBLE; i++){
-        gw->bubble[i] = NULL;
     }
     gw->activeNpc = 0;
     gw->timer = 0.0f;
@@ -59,7 +53,6 @@ GameWorld* createGameWorld( State initialState ) { //initialize the gameworld wi
     return gw;
 
     score = 0;
-
 }
 
 /**
@@ -92,7 +85,6 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
 
     //timer logic that controls the enemies spawn
     int currentSec = (int)gw->timer;
-   
 
     if (currentSec > gw->lastSec) {
         gw->timeCount++;
@@ -103,106 +95,85 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         if(gw->spawnTimer >= gw->spawnInterval){
             gw->spawnTimer = 0.0f;
 
-        if (gw->activeNpc < MAX_NPC) {
-            for (int i = 0; i < MAX_NPC; i++) {
-                if (gw->npc[i] == NULL) {
-                    gw->npc[i] = createNpc(gw->npcSpeed);
-                    gw->activeNpc++;
-                    break;                   
-                }
-            }
-        }
-    }
-        
-
-
-        // Increase the speed and decrease spawn interval of the game if x enemies escape/are captured
-      if (gw->escapedEnemies >= ENEMY_ESCAPE_LIMIT || gw->caughtEnemies >= ENEMY_CAUGHT_LIMIT) {
-        gw->npcSpeed += 4;
-        gw->npcSpeed = fmin(gw->npcSpeed, MAX_NPC_SPEED);
-        gw->spawnInterval = fmax(gw->spawnInterval - SPAWN_DECREMENT, MIN_SPAWN_INTERVAL);
-
-        // Reset the counters
-        gw->escapedEnemies = 0;
-        gw->caughtEnemies = 0;
-    }
-
-        if(gw->BubbleTimer % 6 == 0){
-            if(gw->activeBubble < MAX_BUBBLE){
-            for (int i = 0; i < MAX_BUBBLE; i++){
-                if(gw->bubble[i] == NULL){
-                    gw->bubble[i] = createBubble();
-                    gw->activeBubble++;
-                    break;
-
+            if (gw->activeNpc < MAX_NPC) {
+                for (int i = 0; i < MAX_NPC; i++) {
+                    if (gw->npc[i] == NULL) {
+                        gw->npc[i] = createNpc(gw->npcSpeed);
+                        gw->activeNpc++;
+                        break;                   
                     }
                 }
             }
         }
 
-        //Oxygen control
-        if(gw->player->oxygen > 0){
-            if(gw->player->collision.y == globalWaterSurfaceHeight) {
-                if(gw->player->oxygen < 100){
-                    gw->player->oxygen = fmin(gw->player->oxygen + 2, 100);
+        // Increase the speed and decrease spawn interval of the game if x enemies escape/are captured
+        if(gw->escapedEnemies >= ENEMY_ESCAPE_LIMIT || gw->caughtEnemies >= ENEMY_CAUGHT_LIMIT) {
+            gw->npcSpeed += 4;
+            gw->npcSpeed = fmin(gw->npcSpeed, MAX_NPC_SPEED);
+            gw->spawnInterval = fmax(gw->spawnInterval - SPAWN_DECREMENT, MIN_SPAWN_INTERVAL);
+
+            // Reset the counters
+            gw->escapedEnemies = 0;
+            gw->caughtEnemies = 0;
+        }
+
+        //Bubble spawn logic
+        if(gw->BubbleTimer % 6 == 0) {
+            if(gw->activeNpc < MAX_NPC) {
+                for(int i = 0; i < MAX_NPC; i++) {
+                    if(gw->npc[i] == NULL) {
+                        gw->npc[i] = createBubble(68);
+                        gw->activeNpc++;
+                        break;
+                    }
                 }
             }
-            else if(gw->player->collision.y + gw->player->collision.height / 2 < (GetScreenHeight() * 2 / 3)) {
-                gw->player->oxygen -= 3;
-            }
-            else {
-                gw->player->oxygen -= 6;
-            }
-        }
-        else{
-            gw->gameState = GAME_OVER;
         }
     }
 
+    //Oxygen control
+    if(gw->player->oxygen > 0){
+        if(gw->player->collision.y == globalWaterSurfaceHeight) {
+            if(gw->player->oxygen < MAX_OXYGEN) {
+                gw->player->oxygen = fmin(gw->player->oxygen + 2 * delta, MAX_OXYGEN);
+            }
+        }
+        else if(gw->player->collision.y + gw->player->collision.height / 2 < (globalPixelHeight * 2 / 3)) {
+            gw->player->oxygen -= 3 * delta;
+        }
+        else {
+            gw->player->oxygen -= 6 * delta;
+        }
+    }
+    else{
+        gw->gameState = GAME_OVER;
+    }
+
     //Update all NPCs
-
-    for (int i = 0; i < MAX_NPC; i++) {
-
-        //if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
-        if (gw->npc[i] != NULL) {
-            updateNpc(gw->npc[i], delta);
-
-        //Checks if the npc has escaped or been captured
-            if(gw->npc[i]->collision.x <= 0 || gw->npc[i]->captured) {
-                if (gw->npc[i]->enemy && gw->npc[i]->collision.x <= 0){
-                    gw->escapedEnemies++;
-                }
-
+    for(int i = 0; i < MAX_NPC; i++) {
+        //Only update NPC if it is currently active
+        if(gw->npc[i] != NULL) {
+            //Checks if the NPC is marked for removal
+            if(gw->npc[i]->removeOnNextFrame) {
                 free(gw->npc[i]);
                 gw->npc[i] = NULL;
                 gw->activeNpc--;
 
                 continue;   
             }
-            
 
-            //Checks if the player is currently using the net
-            if(gw->player->netTimer > 0 && gw->player->netTimer < 0.25 && gw->player->collision.y > globalWaterSurfaceHeight) {
-                //Checks if the NPC was captured
-                checkCapture(gw, gw->player, gw->npc[i]);
-            }
+            updateNpc(gw->npc[i], delta);
+            checkNpcCapture(gw, gw->player, gw->npc[i]);
+            checkNpcCollision(gw->player, gw->npc[i]);
 
-            //Only deal damage to the player if the cooldown is 0
-            if(gw->player->damageCooldown == 0) {
-                //Checks if the NPC collided with the player
-                if(CheckCollisionRecs(gw->player->collision, gw->npc[i]->collision)){
-                    gw->player->damageCooldown = 1;
-                    gw->player->oxygen -= 15;
+            //Checks if the NPC has escaped
+            if(gw->npc[i]->collision.x + gw->npc[i]->collision.width < 0){
+                gw->npc[i]->removeOnNextFrame = true;
+
+                if(gw->npc[i]->type == NPC_GARBAGE) {
+                    gw->escapedEnemies++;
                 }
             }
-        }
-    }
-    
-    //Update all bubbles
-    for(int i = 0; i < MAX_BUBBLE; i++){
-        if(gw->bubble[i] != NULL){
-            updateBubble(gw->bubble[i], delta);
-            playerBubbleInteract(gw->player, gw->bubble[i]);
         }
     }
 
@@ -222,14 +193,8 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     drawPlayer(gw->player, gw->timer);
 
     for (int i = 0; i < MAX_NPC; i++) {
-        if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
+        if(gw->npc[i] != NULL) {
             drawNpc(gw->npc[i]);
-        }
-    }
-    
-    for(int i = 0; i < MAX_BUBBLE; i++){
-      if(gw->bubble[i] != NULL && !gw->bubble[i]->pop){
-         drawBubble(gw->bubble[i]);
         }
     }
 

@@ -3,9 +3,11 @@
 
 #include "enums.h"
 
+#define MAX_OXYGEN 100
+
 typedef struct Player {
     Rectangle collision;
-    int oxygen;
+    float oxygen;
     float damageCooldown;
     Vector2 speed;
     float netTimer;

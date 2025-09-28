@@ -45,6 +45,7 @@ void loadResourcesResourceManager(void) {
     rm.cityBgDay = LoadTexture("resources/images/sprites/background/citybg_day.png");
     rm.waterBgDay = LoadTexture("resources/images/sprites/background/waterbg_day.png");
     rm.floorBgDay = LoadTexture("resources/images/sprites/background/floorbg_day.png");
+    /*
     rm.skyBgAfternoon;
     rm.cityBgAfternoon;
     rm.waterBgAfternoon;
@@ -53,11 +54,14 @@ void loadResourcesResourceManager(void) {
     rm.cityBgNight;
     rm.waterBgNight;
     rm.floorBgNight;
+    */
 
     //Game FGs
     rm.foamFgDay = LoadTexture("resources/images/sprites/background/foamfg_day.png");
+    /*
     rm.foamFgAfternoon;
     rm.foamFgNight;
+    */
 
     //Menus
     rm.menuBg = LoadTexture("resources/images/ui/menu_bg.png"); 

@@ -13,15 +13,59 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
         return NULL;
     }
 
-    n->collision.width = 16;
-    n->collision.height = 8;
-    n->speed = speed;
+    n->removeOnNextFrame = false;
+    n->removeOnCollision = false;
+    n->type = GetRandomValue(0, 1);
+    n->speed.x = speed;
+    n->speed.y = 0;
+    n->variant = GetRandomValue(0, 10);
+
+    switch(n->variant) {
+        default:
+            n->collision.width = 16;
+            n->collision.height = 8;
+    }
+
+    switch(n->type) {
+        case NPC_ANIMAL:
+            n->collisionOxygen = -10;
+            n->captureOxygen = -20;
+            n->captureScore = -1;
+            break;
+
+        default:
+            n->collisionOxygen = -20;
+            n->captureOxygen = 10;
+            n->captureScore = 1;
+    }
 
     n->collision.x = globalPixelWidth;
     n->collision.y = (int)GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
-    n->captured = false;
-    n->enemy = GetRandomValue(0, 1);
-    n->variant = GetRandomValue(0, 10);
+
+    return n;
+}
+
+Npc* createBubble(float speed){ //creates a bubble with the starting values
+    Npc *n = (Npc*)malloc(sizeof(Npc));
+    if(n == NULL) {
+        return NULL;
+    }
+
+    n->removeOnNextFrame = false;
+    n->removeOnCollision = true;
+    n->type = NPC_BUBBLE;
+
+    n->collision.width = 16;
+    n->collision.height = 16;
+    n->speed.x = 0;
+    n->speed.y = speed;
+
+    n->collision.x = (int)GetRandomValue(globalPixelWidth / 2, globalPixelWidth - n->collision.width);
+    n->collision.y = globalPixelHeight;
+
+    n->collisionOxygen = 25;
+    n->captureOxygen = 0;
+    n->captureScore = 0;
 
     return n;
 }
@@ -51,30 +95,41 @@ void drawNpc(Npc* n){ //draws the npc
 
     */
 
-    if(n->enemy){
-        DrawRectangle(
-            n->collision.x * currentWindowScale,
-            n->collision.y * currentWindowScale,
-            n->collision.width * currentWindowScale,
-            n->collision.height * currentWindowScale,
-            RED
-        );
-    }else{
-        DrawRectangle(
-            n->collision.x * currentWindowScale,
-            n->collision.y * currentWindowScale,
-            n->collision.width * currentWindowScale,
-            n->collision.height * currentWindowScale,
-            GREEN
-        );
+    //Temporary collision display
+    Color color;
+
+    switch(n->type) {
+        case NPC_ANIMAL:
+            color = GREEN;
+            break;
+
+        case NPC_GARBAGE:
+            color = RED;
+            break;
+
+        default:
+            color = BLUE;
     }
+
+    DrawRectangle(
+        n->collision.x * currentWindowScale,
+        n->collision.y * currentWindowScale,
+        n->collision.width * currentWindowScale,
+        n->collision.height * currentWindowScale,
+        color
+    );
 }
 
 void updateNpc(Npc *n, float delta){ //update the npc position and state
-    if(n->captured){
-        n = NULL;
+    if(n->type == NPC_BUBBLE) {
+        //Bubble 
+        n->collision.y -= n->speed.y * delta;
+        if(n->collision.y < globalWaterSurfaceHeight) {
+            n->removeOnNextFrame = true;
+        }
     }
     else {
-        n->collision.x -= n->speed * delta;
+        //Animal or garbage
+        n->collision.x -= n->speed.x * delta;
     }
 }

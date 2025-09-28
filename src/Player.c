@@ -120,9 +120,8 @@ void updatePlayer(Player *p, float delta){
         p->collision.y += p->speed.y * delta;
     }
 
-    if(p->oxygen >= 100){
-       p->oxygen = 100;
-    }
+    //Ensures the player's oxygen levels don't go past the limit
+    p->oxygen = fmin(p->oxygen, MAX_OXYGEN);
 
     //Border collision
     p->collision.x = fmin(fmax(0, p->collision.x), globalPixelWidth - p->collision.width);
@@ -134,7 +133,6 @@ void drawOxygenBar(Player *p){
     int tankX = 8;
     int tankY = 8;
 
-    int barWidth = 100;
     int barHeight = 4;
     int barX = tankX + 6;
     int barY = tankY + 6;
@@ -162,7 +160,7 @@ void drawOxygenBar(Player *p){
     DrawRectangle(
         barX * currentWindowScale,
         barY * currentWindowScale,
-        p->oxygen * currentWindowScale,
+        (int)p->oxygen * currentWindowScale,
         barHeight * currentWindowScale,
         finalColor
     );

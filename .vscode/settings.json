@@ -11,7 +11,8 @@
         "player.h": "c",
         "npc.h": "c",
         "globalvariables.h": "c",
-        "enums.h": "c"
+        "enums.h": "c",
+        "gameworld.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

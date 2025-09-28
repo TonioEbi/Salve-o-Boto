@@ -19,4 +19,10 @@ typedef enum Direction {
     RIGHT
 } Direction;
 
+typedef enum NPCType {
+    NPC_ANIMAL = 0,
+    NPC_GARBAGE = 1,
+    NPC_BUBBLE = 2
+} NPCType;
+
 #endif
