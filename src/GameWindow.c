@@ -117,13 +117,10 @@ void initGameWindow(GameWindow *gameWindow) {
                     break;
 
                 case GAME_RUNNING:
-                    updateGameWorld(gameWindow->gw, GetFrameTime());
-                    drawGameWorld(gameWindow->gw);
-                    
                     SetMusicVolume(rm.bg_tune, 1.0f); // Normal volume during gameplay
                     SetMusicPitch(rm.bg_tune, 1.0f);
-                    updateGameWorld(gameWindow->gw, GetFrameTime());
                     drawGameWorld(gameWindow->gw);
+                    updateGameWorld(gameWindow->gw, GetFrameTime());
                     break;
 
                 case GAME_MENU_CONTROLS:
@@ -139,7 +136,6 @@ void initGameWindow(GameWindow *gameWindow) {
                     break;
 
                 case GAME_PAUSED:
-                    drawMenuPause(&gameWindow->gw->gameState);
                     SetMusicVolume(rm.bg_tune, 0.2f); // Muffled volume
                     SetMusicPitch(rm.bg_tune, 0.5f); // Slightly lower pitch
                     drawMenuPause(&gameWindow->gw->gameState);
@@ -152,8 +148,8 @@ void initGameWindow(GameWindow *gameWindow) {
 
                 case GAME_RUNNING_RESET:
                     gameWindow->gw = createGameWorld(GAME_RUNNING);
-                    updateGameWorld(gameWindow->gw, GetFrameTime());
                     drawGameWorld(gameWindow->gw);
+                    updateGameWorld(gameWindow->gw, GetFrameTime());
                     break;
 
                 default:

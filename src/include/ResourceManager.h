@@ -12,11 +12,31 @@
 typedef struct ResourceManager {
     //Player
     Texture2D player;
+    Texture2D playerAttacking;
     Texture2D oxyTank;
 
     //NPCs
     Texture2D animalArray[10];
     Texture2D enemyArray[10];
+
+    //Game BGs
+    Texture2D skyBgDay;
+    Texture2D cityBgDay;
+    Texture2D waterBgDay;
+    Texture2D floorBgDay;
+    Texture2D skyBgAfternoon;
+    Texture2D cityBgAfternoon;
+    Texture2D waterBgAfternoon;
+    Texture2D floorBgAfternoon;
+    Texture2D skyBgNight;
+    Texture2D cityBgNight;
+    Texture2D waterBgNight;
+    Texture2D floorBgNight;
+
+    //Game FGs
+    Texture2D foamFgDay;
+    Texture2D foamFgAfternoon;
+    Texture2D foamFgNight;
 
     //Menus
     Texture2D menuBg; 

@@ -60,3 +60,13 @@ void updateGameWorld( GameWorld *gw, float delta );
  * @brief Draws the state of the game.
  */
 void drawGameWorld( GameWorld *gw );
+
+/**
+ * @brief Draws the environment behind all entities.
+ */
+void drawBackground( float time );
+
+/**
+ * @brief Draws the environment in front of all entities.
+ */
+void drawForeground( float time );

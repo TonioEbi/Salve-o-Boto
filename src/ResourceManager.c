@@ -16,7 +16,8 @@ ResourceManager rm = {0};
 
 void loadResourcesResourceManager(void) {
     //Player
-    rm.player = LoadTexture( "resources/images/sprites/diver.png" );
+    rm.player = LoadTexture("resources/images/sprites/diver.png");
+    rm.playerAttacking = LoadTexture("resources/images/sprites/diver_attacking.png");
     rm.oxyTank = LoadTexture( "resources/images/sprites/tank.png");
 
     /*
@@ -38,6 +39,25 @@ void loadResourcesResourceManager(void) {
     }
 
     */
+
+    //Game BGs
+    rm.skyBgDay = LoadTexture("resources/images/sprites/background/skybg_day.png");
+    rm.cityBgDay = LoadTexture("resources/images/sprites/background/citybg_day.png");
+    rm.waterBgDay = LoadTexture("resources/images/sprites/background/waterbg_day.png");
+    rm.floorBgDay = LoadTexture("resources/images/sprites/background/floorbg_day.png");
+    rm.skyBgAfternoon;
+    rm.cityBgAfternoon;
+    rm.waterBgAfternoon;
+    rm.floorBgAfternoon;
+    rm.skyBgNight;
+    rm.cityBgNight;
+    rm.waterBgNight;
+    rm.floorBgNight;
+
+    //Game FGs
+    rm.foamFgDay = LoadTexture("resources/images/sprites/background/foamfg_day.png");
+    rm.foamFgAfternoon;
+    rm.foamFgNight;
 
     //Menus
     rm.menuBg = LoadTexture("resources/images/ui/menu_bg.png"); 

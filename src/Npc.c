@@ -18,7 +18,7 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
     n->speed = speed;
 
     n->collision.x = globalPixelWidth;
-    n->collision.y = GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
+    n->collision.y = (int)GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
     n->captured = false;
     n->enemy = GetRandomValue(0, 1);
     n->variant = GetRandomValue(0, 10);
@@ -30,24 +30,24 @@ void drawNpc(Npc* n){ //draws the npc
     /*
     Descomente quando for colocar as texturas dos npcs
 
-    Texture2D texture;
+    Texture2D* texture;
     if(n->type) {
-        texture = rm.enemyArray[n->variant];
+        texture = &rm.enemyArray[n->variant];
     }
     else {
-        texture = rm.animalArray[n->variant];
+        texture = &rm.animalArray[n->variant];
     }
 
     Rectangle source = {0, 0, 16, 16};
     Rectangle dest = {
-        (p->collision.x + p->collision.width / 2) * currentWindowScale,
-        (p->collision.y + p->collision.height / 2) * currentWindowScale,
+        (int)(p->collision.x + p->collision.width / 2) * currentWindowScale,
+        (int)(p->collision.y + p->collision.height / 2) * currentWindowScale,
         source.width * currentWindowScale,
         source.height * currentWindowScale
     };
     Vector2 offset = {8 * currentWindowScale, 8 * currentWindowScale};
 
-    DrawTexturePro(texture, source, dest, offset, 0, WHITE);
+    DrawTexturePro(*texture, source, dest, offset, 0, WHITE);
 
     */
 

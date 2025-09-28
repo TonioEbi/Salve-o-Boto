@@ -18,6 +18,6 @@ Player* createPlayer(void);
 
 void updatePlayer(Player *p, float delta);
 
-void drawPlayer(Player *p);
+void drawPlayer(Player *p, float timer);
 
 void drawOxygenBar(Player *p);

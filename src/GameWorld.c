@@ -182,7 +182,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             
 
             //Checks if the player is currently using the net
-            if(gw->player->netTimer > 0.1) {
+            if(gw->player->netTimer > 0 && gw->player->netTimer < 0.25 && gw->player->collision.y > globalWaterSurfaceHeight) {
                 //Checks if the NPC was captured
                 checkCapture(gw, gw->player, gw->npc[i]);
             }
@@ -215,28 +215,144 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
  */
 void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its components
 
-    BeginDrawing();    
-    ClearBackground((Color){ 16, 62, 87, 255 });
+    BeginDrawing();
+
+    drawBackground(gw->timer);
+
+    drawPlayer(gw->player, gw->timer);
 
     for (int i = 0; i < MAX_NPC; i++) {
         if (gw->npc[i] != NULL && !gw->npc[i]->captured) {
             drawNpc(gw->npc[i]);
         }
     }
-
-    drawPlayer(gw->player);
     
     for(int i = 0; i < MAX_BUBBLE; i++){
       if(gw->bubble[i] != NULL && !gw->bubble[i]->pop){
          drawBubble(gw->bubble[i]);
         }
     }
+
+    drawForeground(gw->timer);
     
-    DrawLine(0, globalWaterSurfaceHeight * currentWindowScale, GetScreenWidth(), globalWaterSurfaceHeight * currentWindowScale, BLUE);
+    //Water surface height
+    //DrawLine(0, globalWaterSurfaceHeight * currentWindowScale, GetScreenWidth(), globalWaterSurfaceHeight * currentWindowScale, BLUE);
 
     drawOxygenBar(gw->player);
     drawScoreboard(gw->gameState);
 
     EndDrawing();
 
+}
+
+/**
+ * @brief Draws the environment behind all entities.
+ */
+void drawBackground( float time ) {
+    Texture2D* skyBg;
+    Texture2D* cityBg;
+    Texture2D* waterBg;
+    Texture2D* floorBg;
+
+    Rectangle source;
+    Rectangle dest;
+    Vector2 offset = {0, 0};
+
+    int dayTimeInterval = 60;
+
+    //Only changes textures in 60 second intervals
+    if((int)time % dayTimeInterval == 0) {
+        switch((int)(time / dayTimeInterval) % 4) {
+            /*
+            case 1:
+                gameBg = &rm.skyBgAfternoon;
+                cityBg = &rm.cityBgAfternoon;
+                waterBg = &rm.waterBgAfternoon;
+                floorBg = &rm.floorBgAfternoon;
+                break;
+            case 2:
+                gameBg = &rm.skyBgNight;
+                cityBg = &rm.cityBgNight;
+                waterBg = &rm.waterBgNight;
+                floorBg = &rm.floorBgNight;
+                break;
+                
+            case 3:
+                gameBg = &rm.skyBgAfternoon;
+                cityBg = &rm.cityBgAfternoon;
+                waterBg = &rm.waterBgAfternoon;
+                floorBg = &rm.floorBgAfternoon;
+                break;
+            
+            */
+
+            default:
+                skyBg = &rm.skyBgDay;
+                cityBg = &rm.cityBgDay;
+                waterBg = &rm.waterBgDay;
+                floorBg = &rm.floorBgDay;
+        }
+    }
+    
+    //Sky
+    source = (Rectangle){0, 0, 320, 64};
+    dest = (Rectangle){0, 0, GetScreenWidth(), 64 * currentWindowScale};
+    DrawTexturePro(*skyBg, source, dest, offset, 0, WHITE);
+
+    //Cityscape
+    source = (Rectangle){(int)time, 0, 320, 180};
+    dest = (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()};
+    DrawTexturePro(*cityBg, source, dest, offset, 0, WHITE);
+
+    //Water
+    dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 128 * currentWindowScale};
+    source = (Rectangle){320 + (int)(time * 75), 0, 320, 128};
+    DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
+    source = (Rectangle){(int)(time * 100), 0, 320, 128};
+    DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
+
+    //Floor
+    source = (Rectangle){(int)(time * 40), 0, 320, 32};
+    dest = (Rectangle){0, 148 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
+    DrawTexturePro(*floorBg, source, dest, offset, 0, WHITE);
+}
+
+/**
+ * @brief Draws the environment in front of all entities.
+ */
+void drawForeground( float time ) {
+    Texture2D* foamFg;
+
+    Rectangle source;
+    Rectangle dest;
+    Vector2 offset = {0, 0};
+
+    int dayTimeInterval = 60;
+
+    //Only changes textures in 60 second intervals
+    if((int)time % dayTimeInterval == 0) {
+        switch((int)(time / dayTimeInterval) % 4) {
+            /*
+            case 1:
+                foamFg = &rm.foamFgAfternoon;
+                break;
+            case 2:
+                foamFg = &rm.foamFgNight;
+                break;
+                
+            case 3:
+                foamFg = &rm.foamFgAfternoon;
+                break;
+            
+            */
+
+            default:
+                foamFg = &rm.foamFgDay;
+        }
+    }
+
+    //Foam
+    source = (Rectangle){(int)(time * 100), 0, 320, 32};
+    dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
+    DrawTexturePro(*foamFg, source, dest, offset, 0, WHITE);
 }

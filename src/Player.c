@@ -14,28 +14,35 @@ Player * createPlayer(void){   // creates the player with the inicial settings
         return NULL;
     }
 
-    p->collision.width = 60;
-    p->collision.height = 40;
+    p->collision.width = 48;
+    p->collision.height = 24;
     p->collision.x = (globalPixelWidth - p->collision.width) / 2.0f ;
     p->collision.y = globalPixelHeight * 0.6f;
     p->oxygen = 100;
     p->speed.x = 120;
     p->speed.y = 120;
     p->netTimer = 0;
-    p->netOffset = 48;
-    p->netSize = (Vector2){48, 48};
+    p->netOffset = 40;
+    p->netSize = (Vector2){24, 24};
     p->lastDir = RIGHT;
 
     return p;
 }
 
-void drawPlayer(Player *p){
-    //Ensures the drawn sprite has the correct dimensions
+void drawPlayer(Player *p, float timer){
+    Texture2D* texture = &rm.player;
     int res = 64;
-    Rectangle source = {0, 0, res, res};
+    Rectangle source = {res * (int)(timer * 10), res * (p->collision.y == globalWaterSurfaceHeight), res, res};
+
+    if(p->netTimer > 0 && p->collision.y > globalWaterSurfaceHeight) {
+        texture = &rm.playerAttacking;
+        res = 128;
+        source = (Rectangle){res * (int)((0.4 - p->netTimer) * 15), 0, res, res};
+    }
+
     Rectangle dest = {
-        (p->collision.x + p->collision.width / 2) * currentWindowScale,
-        (p->collision.y + p->collision.height / 2) * currentWindowScale,
+        (int)(p->collision.x + p->collision.width / 2) * currentWindowScale,
+        (int)(p->collision.y + p->collision.height / 2) * currentWindowScale,
         source.width * currentWindowScale,
         source.height * currentWindowScale
     };
@@ -57,8 +64,9 @@ void drawPlayer(Player *p){
             netPos.x += p->netOffset;
     }
 
-    DrawTexturePro(rm.player, source, dest, offset, 0, tint);
+    DrawTexturePro(*texture, source, dest, offset, 0, tint);
 
+    /*
     //Temporary player collision display
     DrawRectangle(
         p->collision.x * currentWindowScale,
@@ -68,7 +76,7 @@ void drawPlayer(Player *p){
         (Color){0, 255, 255, 63}
     );
     //Temporary net collision display
-    if(p->netTimer > 0.1) {
+    if(p->netTimer > 0 && p->netTimer < 0.25 && p->collision.y > globalWaterSurfaceHeight) {
         DrawRectangle(
             netPos.x * currentWindowScale,
             netPos.y * currentWindowScale,
@@ -77,6 +85,7 @@ void drawPlayer(Player *p){
             (Color){255, 255, 0, 63}
         );
     }
+    */
 }
 
 void updatePlayer(Player *p, float delta){
@@ -91,8 +100,8 @@ void updatePlayer(Player *p, float delta){
     }
 
     //Only use net if the timer is set to 0
-    if(p->netTimer == 0 && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_E))){
-        p->netTimer = 0.5;
+    if(p->netTimer == 0 && p->collision.y > globalWaterSurfaceHeight && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_E))){
+        p->netTimer = 0.4;
     }
 
     //Player movement
@@ -122,11 +131,13 @@ void updatePlayer(Player *p, float delta){
 
 
 void drawOxygenBar(Player *p){
+    int tankX = 8;
+    int tankY = 8;
 
     int barWidth = 100;
-    int barHeight = 10;
-    int barX = 8;
-    int barY = 8;
+    int barHeight = 4;
+    int barX = tankX + 6;
+    int barY = tankY + 6;
 
     // Change color of the bar based on the oxygen levels
     Color startColor;
@@ -159,8 +170,8 @@ void drawOxygenBar(Player *p){
     // Draw the the tank on top of the bar
     Rectangle source = {0, 0, rm.oxyTank.width, rm.oxyTank.height};
     Rectangle dest = {
-        barX * currentWindowScale,
-        barY * currentWindowScale,
+        tankX * currentWindowScale,
+        tankY * currentWindowScale,
         rm.oxyTank.width * currentWindowScale,
         rm.oxyTank.height * currentWindowScale
     };
