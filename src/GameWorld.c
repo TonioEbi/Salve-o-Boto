@@ -73,8 +73,9 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
  */
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
-    gw->spawnTimer += delta;
     updatePlayer( gw->player, delta );
+    gw->spawnTimer += delta;
+    gw->BubbleTimer += delta;
 
     //Pause function
     if(gw->gameState == GAME_RUNNING){
@@ -118,8 +119,10 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         }
 
         //Bubble spawn logic
-        if(gw->BubbleTimer % 6 == 0) {
-            if(gw->activeNpc < MAX_NPC) {
+        if(gw->BubbleTimer >= BUBBLE_SPAWN_INTERVAL){
+            gw->BubbleTimer = 0.0f;
+
+                        if(gw->activeNpc < MAX_NPC) {
                 for(int i = 0; i < MAX_NPC; i++) {
                     if(gw->npc[i] == NULL) {
                         gw->npc[i] = createBubble(68);

@@ -31,7 +31,6 @@ typedef struct GameWindow {
     GameWorld *gw;
 
     bool initialized;
-
 } GameWindow;
 
 /**

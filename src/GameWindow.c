@@ -5,6 +5,7 @@
 
 #include "GameWindow.h"
 #include "ResourceManager.h"
+#include "GlobalVariables.h"
 #include "GameWorld.h"
 #include "Menu.h"
 
@@ -82,7 +83,8 @@ void initGameWindow(GameWindow *gameWindow) {
         }
 
         InitWindow(gameWindow->width, gameWindow->height, gameWindow->title);
-    
+
+
         if(gameWindow->initAudio) {
             InitAudioDevice();
         }
@@ -93,6 +95,8 @@ void initGameWindow(GameWindow *gameWindow) {
         if(gameWindow->loadResources) {
             loadResourcesResourceManager();
         }
+
+        SetWindowIcon(icon);
 
         PlayMusicStream(rm.bg_tune);
         SetMusicVolume(rm.bg_tune, 1.0f);
@@ -116,9 +120,10 @@ void initGameWindow(GameWindow *gameWindow) {
 
                 case GAME_RUNNING:
                     SetMusicVolume(rm.bg_tune, 0.5f); // Normal volume during gameplay
-                    SetMusicPitch(rm.bg_tune, 1.0f);
-                    drawGameWorld(gameWindow->gw);
+                    SetMusicPitch(rm.bg_tune, 1.0f);                    
                     updateGameWorld(gameWindow->gw, GetFrameTime());
+                    drawGameWorld(gameWindow->gw);
+
                     break;
 
                 case GAME_MENU_CONTROLS:

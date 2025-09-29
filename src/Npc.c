@@ -15,11 +15,28 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
 
     n->removeOnNextFrame = false;
     n->removeOnCollision = false;
-    n->type = GetRandomValue(0, 1);
+    n->type = GetRandomValue(0, 1); // 0 = Animal 1 = Garbage
     n->speed.x = speed;
     n->speed.y = 0;
-    n->variant = GetRandomValue(0, 10);
 
+   if(n->type == NPC_ANIMAL) {
+    n->variant = GetRandomValue(0, 15);
+    n->collision.width = 16;
+    n->collision.height = 8;
+    n->collisionOxygen = -10;
+    n->captureOxygen = -20;
+    n->captureScore = -1;
+   }
+   else{ //NPC_GARBAGE
+    n->variant = GetRandomValue(0, 9);
+    n->collision.width = 16;
+    n->collision.height = 16;
+    n->collisionOxygen = -20;
+    n->captureOxygen = 10;
+    n->captureScore = 1;
+   }
+   
+   /*
     switch(n->variant) {
         default:
             n->collision.width = 16;
@@ -38,7 +55,7 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
             n->captureOxygen = 10;
             n->captureScore = 1;
     }
-
+*/
     n->collision.x = globalPixelWidth;
     n->collision.y = (int)GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
 
@@ -73,31 +90,36 @@ Npc* createBubble(float speed){ //creates a bubble with the starting values
 void drawNpc(Npc* n){ //draws the npc
     /*
     Descomente quando for colocar as texturas dos npcs
+    */
+    Texture2D texture;
 
-    Texture2D* texture;
-    if(n->type) {
-        texture = &rm.enemyArray[n->variant];
+    if(n->type == NPC_BUBBLE){
+        texture = rm.bubbleIdle;
+    }
+
+   else if(n->type == NPC_GARBAGE) {
+        texture = rm.enemyArray[n->variant];
     }
     else {
-        texture = &rm.animalArray[n->variant];
+        texture = rm.animalArray[n->variant];
     }
 
-    Rectangle source = {0, 0, 16, 16};
+    Rectangle source = {0, 0, (float)texture.width, (float)texture.height};
     Rectangle dest = {
-        (int)(p->collision.x + p->collision.width / 2) * currentWindowScale,
-        (int)(p->collision.y + p->collision.height / 2) * currentWindowScale,
+        (int)(n->collision.x + n->collision.width / 2) * currentWindowScale,
+        (int)(n->collision.y + n->collision.height / 2) * currentWindowScale,
         source.width * currentWindowScale,
         source.height * currentWindowScale
     };
     Vector2 offset = {8 * currentWindowScale, 8 * currentWindowScale};
 
-    DrawTexturePro(*texture, source, dest, offset, 0, WHITE);
+    DrawTexturePro(texture, source, dest, offset, 0, WHITE);
 
-    */
+ 
 
-    //Temporary collision display
-    Color color;
 
+    Color tint = {255, 255, 255, 0};
+    /*Temporary collision display
     switch(n->type) {
         case NPC_ANIMAL:
             color = GREEN;
@@ -109,14 +131,14 @@ void drawNpc(Npc* n){ //draws the npc
 
         default:
             color = BLUE;
-    }
+    } */
 
     DrawRectangle(
         n->collision.x * currentWindowScale,
         n->collision.y * currentWindowScale,
         n->collision.width * currentWindowScale,
         n->collision.height * currentWindowScale,
-        color
+        tint
     );
 }
 

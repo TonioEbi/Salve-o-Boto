@@ -32,6 +32,7 @@ int main(void) {
         true                   // init audio
     );
 
+    
     initGameWindow( gameWindow );
 
     return 0;

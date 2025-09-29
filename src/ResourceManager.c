@@ -11,34 +11,47 @@
 
 #include "ResourceManager.h"
 #include "raylib/raylib.h"
+#include "GlobalVariables.h"
 
+Image icon;
 ResourceManager rm = {0};
 
+
 void loadResourcesResourceManager(void) {
+    //Misc. Images
+    icon = LoadImage("resources/images/icon.png");
+
     //Player
     rm.player = LoadTexture("resources/images/sprites/diver.png");
     rm.playerAttacking = LoadTexture("resources/images/sprites/diver_attacking.png");
     rm.oxyTank = LoadTexture( "resources/images/sprites/tank.png");
 
-    /*
+    /* 
     Descomente quando for colocar as texturas dos animais e do lixo
     Simplesmente inclua arquivos nomeados "type_0.png", "type_1.png" e assim por diante, até o "type_10.png" nas pastas apropriadas
-
+    */
     //NPCs
     {
-        char file[36];
+        char file[50];
+        for(int i = 0; i < 16; i++) {
+            //Loads all animal textures into the animal array
+            snprintf(file, sizeof(file), "resources/images/sprites/npc/animal/type_%d.png", i);
+            rm.animalArray[i] = LoadTexture(file);
+        }
+        
         for(int i = 0; i < 10; i++) {
             //Loads all animal textures into the animal array
-            snprintf(file, 36, "resources/images/animal/type_%d.png", i);
-            rm.animalArray[i] = LoadTexture(file);
-
-            //Loads all animal textures into the animal array
-            snprintf(file, 36, "resources/images/enemy/type_%d.png", i);
+            snprintf(file, sizeof(file), "resources/images/sprites/npc/enemy/type_%d.png", i);
             rm.enemyArray[i] = LoadTexture(file);
         }
     }
 
-    */
+        rm.bubbleIdle = LoadTexture("resources/images/sprites/npc/bubble/bubble_idle.png");
+        rm.bubblePop = LoadTexture("resources/images/sprites/npc/bubble/bubble_pop.png");
+        rm.bubbleBreathe = LoadTexture("resources/images/sprites/npc/bubble/bubble_breathe.png");
+
+
+
 
     //Game BGs
     rm.skyBgDay = LoadTexture("resources/images/sprites/background/skybg_day.png");
@@ -85,9 +98,26 @@ void loadResourcesResourceManager(void) {
 }
 
 void unloadResourcesResourceManager(void) {
+    //Misc. Images
+    UnloadImage(icon);
+
     //Player
     UnloadTexture(rm.player);
     UnloadTexture(rm.oxyTank);
+
+    //NPCs
+    for(int i = 0; i < 10; i ++){
+    UnloadTexture(rm.enemyArray[i]);
+    }
+    for(int i = 0; i < 16; i++){
+    UnloadTexture(rm.animalArray[i]);
+    }
+
+    UnloadTexture(rm.bubbleIdle);
+    UnloadTexture(rm.bubblePop);
+    UnloadTexture(rm.bubbleBreathe);
+
+
 
     //Menus
     UnloadTexture(rm.menuBg);

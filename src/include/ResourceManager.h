@@ -10,14 +10,21 @@
 #include "raylib/raylib.h"
 
 typedef struct ResourceManager {
+    //Misc. Images
+   //    Image icon;
+
     //Player
     Texture2D player;
     Texture2D playerAttacking;
     Texture2D oxyTank;
 
     //NPCs
-    Texture2D animalArray[10];
+    Texture2D animalArray[16];
     Texture2D enemyArray[10];
+
+    Texture2D bubbleIdle;
+    Texture2D bubblePop;
+    Texture2D bubbleBreathe;
 
     //Game BGs
     Texture2D skyBgDay;
