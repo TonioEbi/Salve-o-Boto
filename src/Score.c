@@ -12,7 +12,7 @@
 bool isNewBest = true;
 
 void drawInGameScore(void) {
-    char scoreText[32];
+    char scoreText[11];
     sprintf(scoreText, "%d", score);
 
     Vector2 textOffset = MeasureTextEx(GetFontDefault(), scoreText, 10, 1);
@@ -29,11 +29,9 @@ void drawBestScore(bool showLastScore) {
     int x;
     int y;
 
-    char best[32] = "Melhor: ";
     Color color = WHITE;
-    char bestScoreText[11];
-    sprintf(bestScoreText, "%d", hiscore);
-    strcat(best, bestScoreText);
+    char bestScoreText[32];
+    sprintf(bestScoreText, "Melhor: %d", hiscore);
 
     if(showLastScore) {
         char scoreText[11];
@@ -46,20 +44,20 @@ void drawBestScore(bool showLastScore) {
         y = (globalPixelHeight - 32 - textOffset.y) * currentWindowScale;
 
         if(isNewBest) {
-            sprintf(best, "Novo melhor!");
             color = GREEN;
+            sprintf(bestScoreText, "Novo melhor!");
         }
 
         drawOutlinedText(scoreText, x, y, 10 * currentWindowScale, WHITE, BLACK);
     }
 
-    textOffset = MeasureTextEx(GetFontDefault(), best, 10, 1);
+    textOffset = MeasureTextEx(GetFontDefault(), bestScoreText, 10, 1);
     textOffset.x = (int)(textOffset.x / 2);
     textOffset.y = (int)(textOffset.y / 2);
 
     x = (globalPixelWidth / 2 - textOffset.x) * currentWindowScale;
     y = (globalPixelHeight - 16 - textOffset.y) * currentWindowScale;
-    drawOutlinedText(best, x, y, 10 * currentWindowScale, color, BLACK);
+    drawOutlinedText(bestScoreText, x, y, 10 * currentWindowScale, color, BLACK);
 }
 
 void updateBestScore(void) {

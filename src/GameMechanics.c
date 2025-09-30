@@ -16,7 +16,7 @@ void checkNpcCollision(Player* p, Npc* n) {
 
             //If the NPC is set to be removed after a collision, mark it for removal
             if(n->removeOnCollision) {
-                n->removeOnNextFrame = true;
+                n->shouldBeRemoved = true;
             }
         }
     }
@@ -39,7 +39,7 @@ void checkNpcCapture(GameWorld *gw, Player* p, Npc* n) {
 
         if(CheckCollisionRecs(netRec, n->collision)) {
             //Mark NPC for removal
-            n->removeOnNextFrame = true;
+            n->shouldBeRemoved = true;
 
             awardCaptureBonus(p, n);
 

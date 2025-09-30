@@ -121,7 +121,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         if(gw->BubbleTimer >= BUBBLE_SPAWN_INTERVAL){
             gw->BubbleTimer = 0.0f;
 
-                        if(gw->activeNpc < MAX_NPC) {
+            if(gw->activeNpc < MAX_NPC) {
                 for(int i = 0; i < MAX_NPC; i++) {
                     if(gw->npc[i] == NULL) {
                         gw->npc[i] = createBubble(68);
@@ -137,7 +137,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
     if(gw->player->oxygen > 0){
         if(gw->player->collision.y == globalWaterSurfaceHeight) {
             if(gw->player->oxygen < MAX_OXYGEN) {
-                gw->player->oxygen = fmin(gw->player->oxygen + 2 * delta, MAX_OXYGEN);
+                gw->player->oxygen = fmin(gw->player->oxygen + 3 * delta, MAX_OXYGEN);
             }
         }
         else if(gw->player->collision.y + gw->player->collision.height / 2 < (globalPixelHeight * 2 / 3)) {
@@ -156,25 +156,30 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
     for(int i = 0; i < MAX_NPC; i++) {
         //Only update NPC if it is currently active
         if(gw->npc[i] != NULL) {
-            //Checks if the NPC is marked for removal
-            if(gw->npc[i]->removeOnNextFrame) {
-                free(gw->npc[i]);
-                gw->npc[i] = NULL;
-                gw->activeNpc--;
-
-                continue;   
-            }
-
             updateNpc(gw->npc[i], delta);
-            checkNpcCapture(gw, gw->player, gw->npc[i]);
-            checkNpcCollision(gw->player, gw->npc[i]);
 
-            //Checks if the NPC has escaped
-            if(gw->npc[i]->collision.x + gw->npc[i]->collision.width < 0){
-                gw->npc[i]->removeOnNextFrame = true;
+            //Checks if the NPC is marked for removal
+            if(gw->npc[i]->shouldBeRemoved) {
+                //Checks if the NPC should be removed in the current frame
+                if(gw->npc[i]->removalCountdown <= 0) {
+                    free(gw->npc[i]);
+                    gw->npc[i] = NULL;
+                    gw->activeNpc--;
+                    continue;
+                }
+            }
+            else {
+                checkNpcCapture(gw, gw->player, gw->npc[i]);
+                checkNpcCollision(gw->player, gw->npc[i]);
 
-                if(gw->npc[i]->type == NPC_GARBAGE) {
-                    gw->escapedEnemies++;
+                //Checks if the NPC has escaped
+                if(gw->npc[i]->collision.x + gw->npc[i]->collision.width < 0){
+                    gw->npc[i]->shouldBeRemoved = true;
+                    gw->npc[i]->removalCountdown = 0;
+
+                    if(gw->npc[i]->type == NPC_GARBAGE) {
+                        gw->escapedEnemies++;
+                    }
                 }
             }
         }
@@ -195,7 +200,12 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
 
     for (int i = 0; i < MAX_NPC; i++) {
         if(gw->npc[i] != NULL) {
-            drawNpc(gw->npc[i]);
+            if(gw->npc[i]->type == NPC_BUBBLE) {
+                drawBubble(gw->npc[i]);
+            }
+            else {
+                drawNpc(gw->npc[i]);
+            }
         }
     }
 

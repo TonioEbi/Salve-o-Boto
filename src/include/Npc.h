@@ -7,12 +7,13 @@ typedef struct Npc {
     Rectangle collision;
     NPCType type;
     Vector2 speed;
-    bool removeOnNextFrame;
-    bool removeOnCollision;
     int collisionOxygen;
     int captureOxygen;
     int captureScore;
     int variant;
+    bool removeOnCollision;
+    bool shouldBeRemoved;
+    float removalCountdown;
 }Npc;
 
 Npc* createNpc(float speed);
@@ -20,5 +21,7 @@ Npc* createNpc(float speed);
 Npc* createBubble(float speed);
 
 void drawNpc(Npc* n);
+
+void drawBubble(Npc* n);
 
 void updateNpc(Npc *n, float delta);
