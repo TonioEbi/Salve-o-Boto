@@ -19,45 +19,36 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
     n->speed.x = speed;
     n->speed.y = 0;
 
-   if(n->type == NPC_ANIMAL) {
-    n->variant = GetRandomValue(0, 15);
-    n->collision.width = 16;
-    n->collision.height = 8;
-    n->collisionOxygen = -10;
-    n->captureOxygen = -20;
-    n->captureScore = -1;
-   }
-   else{ //NPC_GARBAGE
-    n->variant = GetRandomValue(0, 9);
-    n->collision.width = 16;
-    n->collision.height = 16;
-    n->collisionOxygen = -20;
-    n->captureOxygen = 10;
-    n->captureScore = 1;
-   }
-   
-   /*
-    switch(n->variant) {
-        default:
-            n->collision.width = 16;
-            n->collision.height = 8;
+    if(n->type == NPC_ANIMAL) {
+        n->variant = GetRandomValue(0, 15);
+
+        //Determines the collision depending on the variant
+        switch(n->variant) {
+            case 10: n->collision = (Rectangle){0, 0, 8, 14}; break;
+            case 11: n->collision = (Rectangle){0, 0, 14, 8}; break;
+            case 12: n->collision = (Rectangle){0, 0, 16, 10}; break;
+            case 13: n->collision = (Rectangle){0, 0, 24, 10}; break;
+            case 14: n->collision = (Rectangle){0, 0, 24, 12}; break;
+            case 15: n->collision = (Rectangle){0, 0, 8, 32}; break;
+            default: n->collision = (Rectangle){0, 0, 8, 8};
+        }
+
+        n->collisionOxygen = -10;
+        n->captureOxygen = -20;
+        n->captureScore = -1;
+    }
+    else{ //NPC_GARBAGE
+        n->variant = GetRandomValue(0, 9);
+        n->collision.width = 16;
+        n->collision.height = 16;
+
+        n->collisionOxygen = -20;
+        n->captureOxygen = 10;
+        n->captureScore = 1;
     }
 
-    switch(n->type) {
-        case NPC_ANIMAL:
-            n->collisionOxygen = -10;
-            n->captureOxygen = -20;
-            n->captureScore = -1;
-            break;
-
-        default:
-            n->collisionOxygen = -20;
-            n->captureOxygen = 10;
-            n->captureScore = 1;
-    }
-*/
-    n->collision.x = globalPixelWidth;
-    n->collision.y = (int)GetRandomValue((globalPixelHeight - n->collision.height), globalWaterSurfaceHeight);
+    n->collision.x = globalPixelWidth + 16; //Padding so the textures don't immediately pop into view
+    n->collision.y = (int)GetRandomValue(globalWaterSurfaceHeight + 8, (globalPixelHeight - n->collision.height));
 
     return n;
 }
@@ -88,32 +79,28 @@ Npc* createBubble(float speed){ //creates a bubble with the starting values
 }
 
 void drawNpc(Npc* n){ //draws the npc
-    /*
-    Descomente quando for colocar as texturas dos npcs
-    */
-    Texture2D texture;
+    Texture2D *texture;
 
     if(n->type == NPC_BUBBLE){
-        texture = rm.bubbleIdle;
+        texture = &rm.bubbleIdle;
     }
-
-   else if(n->type == NPC_GARBAGE) {
-        texture = rm.enemyArray[n->variant];
+    else if(n->type == NPC_GARBAGE) {
+        texture = &rm.enemyArray[n->variant];
     }
     else {
-        texture = rm.animalArray[n->variant];
+        texture = &rm.animalArray[n->variant];
     }
 
-    Rectangle source = {0, 0, (float)texture.width, (float)texture.height};
+    Rectangle source = {0, 0, (float)texture->width, (float)texture->height};
     Rectangle dest = {
         (int)(n->collision.x + n->collision.width / 2) * currentWindowScale,
         (int)(n->collision.y + n->collision.height / 2) * currentWindowScale,
         source.width * currentWindowScale,
         source.height * currentWindowScale
     };
-    Vector2 offset = {8 * currentWindowScale, 8 * currentWindowScale};
+    Vector2 offset = {texture->width / 2 * currentWindowScale, texture->height / 2 * currentWindowScale};
 
-    DrawTexturePro(texture, source, dest, offset, 0, WHITE);
+    DrawTexturePro(*texture, source, dest, offset, 0, WHITE);
 
  
 

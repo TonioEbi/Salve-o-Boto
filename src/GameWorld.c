@@ -18,7 +18,7 @@
 #include "Player.h"
 #include "Npc.h"
 #include "GameMechanics.h"
-#include "Scoreboard.h"
+#include "Score.h"
 
 
 
@@ -31,6 +31,7 @@
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
 GameWorld* createGameWorld( State initialState ) { //initialize the gameworld with the initial values
+    score = 0;
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
@@ -51,8 +52,6 @@ GameWorld* createGameWorld( State initialState ) { //initialize the gameworld wi
     gw->caughtEnemies = 0;
     gw->npcSpeed = 60;
     return gw;
-
-    score = 0;
 }
 
 /**
@@ -149,6 +148,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         }
     }
     else{
+        updateBestScore();
         gw->gameState = GAME_OVER;
     }
 
@@ -179,8 +179,6 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
             }
         }
     }
-
-    updateScoreboard(gw->gameState);
 }
 
 
@@ -207,7 +205,7 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
     //DrawLine(0, globalWaterSurfaceHeight * currentWindowScale, GetScreenWidth(), globalWaterSurfaceHeight * currentWindowScale, BLUE);
 
     drawOxygenBar(gw->player);
-    drawScoreboard(gw->gameState);
+    drawInGameScore();
 
     EndDrawing();
 

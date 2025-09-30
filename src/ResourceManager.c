@@ -11,25 +11,18 @@
 
 #include "ResourceManager.h"
 #include "raylib/raylib.h"
-#include "GlobalVariables.h"
 
-Image icon;
 ResourceManager rm = {0};
-
 
 void loadResourcesResourceManager(void) {
     //Misc. Images
-    icon = LoadImage("resources/images/icon.png");
+    rm.icon = LoadImage("resources/images/icon.png");
 
     //Player
     rm.player = LoadTexture("resources/images/sprites/diver.png");
     rm.playerAttacking = LoadTexture("resources/images/sprites/diver_attacking.png");
     rm.oxyTank = LoadTexture( "resources/images/sprites/tank.png");
 
-    /* 
-    Descomente quando for colocar as texturas dos animais e do lixo
-    Simplesmente inclua arquivos nomeados "type_0.png", "type_1.png" e assim por diante, até o "type_10.png" nas pastas apropriadas
-    */
     //NPCs
     {
         char file[50];
@@ -46,12 +39,9 @@ void loadResourcesResourceManager(void) {
         }
     }
 
-        rm.bubbleIdle = LoadTexture("resources/images/sprites/npc/bubble/bubble_idle.png");
-        rm.bubblePop = LoadTexture("resources/images/sprites/npc/bubble/bubble_pop.png");
-        rm.bubbleBreathe = LoadTexture("resources/images/sprites/npc/bubble/bubble_breathe.png");
-
-
-
+    rm.bubbleIdle = LoadTexture("resources/images/sprites/npc/bubble/bubble_idle.png");
+    rm.bubblePop = LoadTexture("resources/images/sprites/npc/bubble/bubble_pop.png");
+    rm.bubbleBreathe = LoadTexture("resources/images/sprites/npc/bubble/bubble_breathe.png");
 
     //Game BGs
     rm.skyBgDay = LoadTexture("resources/images/sprites/background/skybg_day.png");
@@ -99,7 +89,7 @@ void loadResourcesResourceManager(void) {
 
 void unloadResourcesResourceManager(void) {
     //Misc. Images
-    UnloadImage(icon);
+    UnloadImage(rm.icon);
 
     //Player
     UnloadTexture(rm.player);

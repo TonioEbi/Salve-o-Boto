@@ -11,7 +11,7 @@
 
 typedef struct ResourceManager {
     //Misc. Images
-   //    Image icon;
+    Image icon;
 
     //Player
     Texture2D player;

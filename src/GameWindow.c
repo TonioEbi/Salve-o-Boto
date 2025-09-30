@@ -14,6 +14,7 @@ const int globalPixelHeight = 180;
 const int globalWaterSurfaceHeight = 60;
 int currentWindowScale = 2;
 int score = 0;
+int hiscore = 0;
 
 GameWindow* createGameWindow(
     int width, 
@@ -82,22 +83,20 @@ void initGameWindow(GameWindow *gameWindow) {
             SetConfigFlags(FLAG_WINDOW_ALWAYS_RUN);
         }
 
-        InitWindow(gameWindow->width, gameWindow->height, gameWindow->title);
-
-
         if(gameWindow->initAudio) {
             InitAudioDevice();
         }
 
         SetTargetFPS(gameWindow->targetFPS);
+
+        InitWindow(gameWindow->width, gameWindow->height, gameWindow->title);
         gameWindow->gw = createGameWorld(GAME_MENU);
 
         if(gameWindow->loadResources) {
             loadResourcesResourceManager();
         }
-
-        SetWindowIcon(icon);
-
+    
+        SetWindowIcon(rm.icon);
         PlayMusicStream(rm.bg_tune);
         SetMusicVolume(rm.bg_tune, 1.0f);
 

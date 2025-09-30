@@ -3,7 +3,7 @@
 #include "ResourceManager.h"
 
 #include "GameWorld.h"
-#include "Scoreboard.h"
+#include "Score.h"
 
 //desenho e animacao dos botoes
 static void DrawButtonAnimation(Rectangle dimensions, Texture2D texture, Vector2 mouse, float scale) {
@@ -30,7 +30,7 @@ static void DrawButtonAnimation(Rectangle dimensions, Texture2D texture, Vector2
 void drawMainMenu(State *gameState) 
 {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
 
     DrawTexturePro (
         rm.menuBg,
@@ -54,31 +54,28 @@ void drawMainMenu(State *gameState)
     DrawButtonAnimation(btnCreditos, rm.creditsButton, mouse, scale);
     DrawButtonAnimation(btnControles, rm.controlsButton, mouse, scale);
 
-
-    //detecta clique e muda estado do jogo
-     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnJogar))
-            {
-                *gameState = GAME_RUNNING;
-            }
-        if (CheckCollisionPointRec(mouse, btnCreditos)) 
-            {
-                *gameState = GAME_CREDITS;
-            }
-        if (CheckCollisionPointRec(mouse, btnControles))
-            {
-                *gameState = GAME_MENU_CONTROLS;
-            }
-        }
-    
+    drawBestScore(false);
 
     EndDrawing();
+
+    //detecta clique e muda estado do jogo
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if(CheckCollisionPointRec(mouse, btnJogar)) {
+            *gameState = GAME_RUNNING;
+        }
+        else if(CheckCollisionPointRec(mouse, btnCreditos)) {
+            *gameState = GAME_CREDITS;
+        }
+        else if(CheckCollisionPointRec(mouse, btnControles)) {
+            *gameState = GAME_MENU_CONTROLS;
+        }
+    }
 }
 
 void drawMenuCredits(State *gameState) 
 {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
 
     DrawTexturePro (
         rm.menuCredits,
@@ -94,20 +91,19 @@ void drawMenuCredits(State *gameState)
     float scale = 1.1f;
     DrawButtonAnimation(btnVoltar, rm.backButton, mouse, scale);
 
-     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnVoltar))
-        {
+    EndDrawing();
+
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if(CheckCollisionPointRec(mouse, btnVoltar)) {
             *gameState = GAME_MENU;
         }
     }
-
-    EndDrawing();
 }
 
 void drawMenuControls(State *gameState) 
 {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
 
     DrawTexturePro (
         rm.menuControls,
@@ -123,6 +119,8 @@ void drawMenuControls(State *gameState)
     float scale = 1.1f;
     DrawButtonAnimation(btnVoltar, rm.backButton, mouse, scale);
 
+    EndDrawing();
+
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if(CheckCollisionPointRec(mouse, btnVoltar)) {
             //Ensures the player doesn't go back to the main menu unintentionally
@@ -134,13 +132,11 @@ void drawMenuControls(State *gameState)
             }
         }
     }
-
-    EndDrawing();
 }    
 
 void drawMenuGameOver( State *gameState) {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
     
     DrawTexturePro (
         rm.menuGameOver,
@@ -159,25 +155,18 @@ void drawMenuGameOver( State *gameState) {
 
     DrawButtonAnimation(btnAgain, rm.againButton, mouse, scale);
     DrawButtonAnimation(btnMenu, rm.menuButton, mouse, scale);
-    drawScoreboard(GAME_OVER);
-
-
-     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnAgain))
-        {
-            *gameState = GAME_RUNNING_RESET;
-        }
-    }
-
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnMenu))
-        {
-            *gameState = GAME_MENU_RESET;
-            
-        }
-    }
+    drawBestScore(true);
 
     EndDrawing();
+
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if(CheckCollisionPointRec(mouse, btnAgain)) {
+            *gameState = GAME_RUNNING_RESET;
+        }
+        else if(CheckCollisionPointRec(mouse, btnMenu)) {
+            *gameState = GAME_MENU_RESET;
+        }
+    }
 }
 
 void drawMenuPause( State *gameState) {
@@ -203,20 +192,17 @@ void drawMenuPause( State *gameState) {
     DrawButtonAnimation(btnVoltar, rm.backButton2, mouse, scale);
     DrawButtonAnimation(btnControles, rm.controlsButton, mouse, scale);
 
-     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, btnMenu))
-            {
-                *gameState = GAME_MENU_RESET;
-            }
-        if (CheckCollisionPointRec(mouse, btnVoltar)) 
-            {
-                *gameState = GAME_RUNNING;
-            }
-        if (CheckCollisionPointRec(mouse, btnControles))
-            {
-                *gameState = GAME_PAUSE_CONTROLS;
-            }
-        }
-
     EndDrawing();
+
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if(CheckCollisionPointRec(mouse, btnMenu)) {
+            *gameState = GAME_MENU_RESET;
+        }
+        else if (CheckCollisionPointRec(mouse, btnVoltar)) {
+            *gameState = GAME_RUNNING;
+        }
+        else if(CheckCollisionPointRec(mouse, btnControles)) {
+            *gameState = GAME_PAUSE_CONTROLS;
+        }
+    }
 }

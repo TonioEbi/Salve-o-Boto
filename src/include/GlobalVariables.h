@@ -7,4 +7,4 @@ extern const int globalPixelHeight;
 extern const int globalWaterSurfaceHeight;
 extern int currentWindowScale;
 extern int score;
-extern Image icon;
+extern int hiscore;
