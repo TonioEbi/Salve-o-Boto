@@ -265,8 +265,8 @@ void drawBackground( float time ) {
             default:
                 skyBg = &rm.skyBgDay;
                 cityBg = &rm.cityBgDay;
-                waterBg = &rm.waterBgDay;
-                floorBg = &rm.floorBgDay;
+                waterBg = &rm.waterBg;
+                floorBg = &rm.floorBg;
         }
     }
     
@@ -282,14 +282,14 @@ void drawBackground( float time ) {
 
     //Water
     dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 128 * currentWindowScale};
-    source = (Rectangle){320 + (int)(time * 75), 0, 320, 128};
+    source = (Rectangle){320 + (int)(time * 70), 0, 320, 128};
     DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
-    source = (Rectangle){(int)(time * 100), 0, 320, 128};
+    source = (Rectangle){(int)(time * 90), 0, 320, 128};
     DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
 
     //Floor
-    source = (Rectangle){(int)(time * 40), 0, 320, 32};
-    dest = (Rectangle){0, 148 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
+    source = (Rectangle){(int)(time * 40), 0, 320, 64};
+    dest = (Rectangle){0, 116 * currentWindowScale, GetScreenWidth(), 64 * currentWindowScale};
     DrawTexturePro(*floorBg, source, dest, offset, 0, WHITE);
 }
 
@@ -297,38 +297,22 @@ void drawBackground( float time ) {
  * @brief Draws the environment in front of all entities.
  */
 void drawForeground( float time ) {
-    Texture2D* foamFg;
-
     Rectangle source;
     Rectangle dest;
     Vector2 offset = {0, 0};
 
-    int dayTimeInterval = 60;
-
-    //Only changes textures in 60 second intervals
-    if((int)time % dayTimeInterval == 0) {
-        switch((int)(time / dayTimeInterval) % 4) {
-            /*
-            case 1:
-                foamFg = &rm.foamFgAfternoon;
-                break;
-            case 2:
-                foamFg = &rm.foamFgNight;
-                break;
-                
-            case 3:
-                foamFg = &rm.foamFgAfternoon;
-                break;
-            
-            */
-
-            default:
-                foamFg = &rm.foamFgDay;
-        }
-    }
-
     //Foam
-    source = (Rectangle){(int)(time * 100), 0, 320, 32};
+    source = (Rectangle){(int)(time * 90), 0, 320, 32};
     dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
-    DrawTexturePro(*foamFg, source, dest, offset, 0, WHITE);
+    DrawTexturePro(rm.foamFg, source, dest, offset, 0, WHITE);
+
+    //Bubbles
+    source = (Rectangle){(int)(time * 100), 0, 320, 128};
+    dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 128 * currentWindowScale};
+    DrawTexturePro(rm.bubbleFg, source, dest, offset, 0, WHITE);
+
+    //Floor
+    source = (Rectangle){(int)(time * 110), 0, 320, 32};
+    dest = (Rectangle){0, 148 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
+    DrawTexturePro(rm.floorFg, source, dest, offset, 0, WHITE);
 }

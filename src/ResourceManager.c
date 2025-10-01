@@ -46,8 +46,8 @@ void loadResourcesResourceManager(void) {
     //Game BGs
     rm.skyBgDay = LoadTexture("resources/images/sprites/background/skybg_day.png");
     rm.cityBgDay = LoadTexture("resources/images/sprites/background/citybg_day.png");
-    rm.waterBgDay = LoadTexture("resources/images/sprites/background/waterbg_day.png");
-    rm.floorBgDay = LoadTexture("resources/images/sprites/background/floorbg_day.png");
+    rm.waterBg = LoadTexture("resources/images/sprites/background/waterbg.png");
+    rm.floorBg = LoadTexture("resources/images/sprites/background/floorbg.png");
     /*
     rm.skyBgAfternoon;
     rm.cityBgAfternoon;
@@ -60,11 +60,9 @@ void loadResourcesResourceManager(void) {
     */
 
     //Game FGs
-    rm.foamFgDay = LoadTexture("resources/images/sprites/background/foamfg_day.png");
-    /*
-    rm.foamFgAfternoon;
-    rm.foamFgNight;
-    */
+    rm.foamFg = LoadTexture("resources/images/sprites/background/foamfg.png");
+    rm.bubbleFg = LoadTexture("resources/images/sprites/background/bubblefg.png");
+    rm.floorFg = LoadTexture("resources/images/sprites/background/floorfg.png");
 
     //Menus
     rm.menuBg = LoadTexture("resources/images/ui/menu_bg.png"); 
@@ -107,7 +105,16 @@ void unloadResourcesResourceManager(void) {
     UnloadTexture(rm.bubblePop);
     UnloadTexture(rm.bubbleBreathe);
 
+    //Game BGs
+    UnloadTexture(rm.skyBgDay);
+    UnloadTexture(rm.cityBgDay);
+    UnloadTexture(rm.waterBg);
+    UnloadTexture(rm.floorBg);
 
+    //Game FGs
+    UnloadTexture(rm.foamFg);
+    UnloadTexture(rm.bubbleFg);
+    UnloadTexture(rm.floorFg);
 
     //Menus
     UnloadTexture(rm.menuBg);

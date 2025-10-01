@@ -12,6 +12,7 @@
 const int globalPixelWidth = 320;
 const int globalPixelHeight = 180;
 const int globalWaterSurfaceHeight = 60;
+const int globalFloorHeight = 160;
 int currentWindowScale = 2;
 int score = 0;
 int hiscore = 0;

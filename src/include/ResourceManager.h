@@ -29,21 +29,19 @@ typedef struct ResourceManager {
     //Game BGs
     Texture2D skyBgDay;
     Texture2D cityBgDay;
-    Texture2D waterBgDay;
-    Texture2D floorBgDay;
+    Texture2D waterBg;
+    Texture2D floorBg;
     Texture2D skyBgAfternoon;
     Texture2D cityBgAfternoon;
-    Texture2D waterBgAfternoon;
     Texture2D floorBgAfternoon;
     Texture2D skyBgNight;
     Texture2D cityBgNight;
-    Texture2D waterBgNight;
     Texture2D floorBgNight;
 
     //Game FGs
-    Texture2D foamFgDay;
-    Texture2D foamFgAfternoon;
-    Texture2D foamFgNight;
+    Texture2D foamFg;
+    Texture2D bubbleFg;
+    Texture2D floorFg;
 
     //Menus
     Texture2D menuBg; 

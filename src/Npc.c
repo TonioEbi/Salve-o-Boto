@@ -50,7 +50,7 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
     }
 
     n->collision.x = globalPixelWidth + 16; //Padding so the textures don't immediately pop into view
-    n->collision.y = (int)GetRandomValue(globalWaterSurfaceHeight + 8, (globalPixelHeight - n->collision.height));
+    n->collision.y = (int)GetRandomValue(globalWaterSurfaceHeight + 8, (globalFloorHeight - n->collision.height));
     
     n->removeOnCollision = false;
     n->shouldBeRemoved = false;
