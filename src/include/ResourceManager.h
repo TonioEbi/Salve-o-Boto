@@ -19,8 +19,8 @@ typedef struct ResourceManager {
     Texture2D oxyTank;
 
     //NPCs
-    Texture2D animalArray[16];
-    Texture2D enemyArray[10];
+    Texture2D animalArray[17];
+    Texture2D enemyArray[11];
 
     Texture2D bubbleIdle;
     Texture2D bubblePop;

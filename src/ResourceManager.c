@@ -26,13 +26,13 @@ void loadResourcesResourceManager(void) {
     //NPCs
     {
         char file[50];
-        for(int i = 0; i < 16; i++) {
+        for(int i = 0; i < 17; i++) {
             //Loads all animal textures into the animal array
             snprintf(file, sizeof(file), "resources/images/sprites/npc/animal/type_%d.png", i);
             rm.animalArray[i] = LoadTexture(file);
         }
         
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 11; i++) {
             //Loads all animal textures into the animal array
             snprintf(file, sizeof(file), "resources/images/sprites/npc/enemy/type_%d.png", i);
             rm.enemyArray[i] = LoadTexture(file);
@@ -94,10 +94,10 @@ void unloadResourcesResourceManager(void) {
     UnloadTexture(rm.oxyTank);
 
     //NPCs
-    for(int i = 0; i < 10; i ++){
+    for(int i = 0; i < 11; i ++){
     UnloadTexture(rm.enemyArray[i]);
     }
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < 17; i++){
     UnloadTexture(rm.animalArray[i]);
     }
 
