@@ -108,26 +108,27 @@ void drawNpc(Npc* n){ //draws the npc
 
         DrawTexturePro(*texture, source, dest, offset, 0, WHITE);
 
-        /*Temporary collision display
-        Color tint;
+        /*
+        //Temporary collision display
+        Color color;
         switch(n->type) {
             case NPC_ANIMAL:
-                color = GREEN;
+                color = (Color){0, 255, 0, 127};
                 break;
 
             case NPC_GARBAGE:
-                color = RED;
+                color = (Color){255, 0, 0, 127};
                 break;
 
             default:
-                color = BLUE;
+                color = (Color){0, 0, 255, 127};
         }
         DrawRectangle(
             n->collision.x * currentWindowScale,
             n->collision.y * currentWindowScale,
             n->collision.width * currentWindowScale,
             n->collision.height * currentWindowScale,
-            tint
+            color
         );
         */
     }
@@ -184,7 +185,7 @@ void drawBubble(Npc* n) { //draws the bubble
         n->collision.y * currentWindowScale,
         n->collision.width * currentWindowScale,
         n->collision.height * currentWindowScale,
-        BLUE
+        (Color){0, 0, 255, 127}
     );
     */
 }

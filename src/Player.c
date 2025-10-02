@@ -14,7 +14,7 @@ Player * createPlayer(void){   // creates the player with the inicial settings
         return NULL;
     }
 
-    p->collision.width = 40;
+    p->collision.width = 30;
     p->collision.height = 20;
     p->collision.x = (globalPixelWidth - p->collision.width) / 2.0f ;
     p->collision.y = globalPixelHeight * 0.6f;
@@ -23,7 +23,7 @@ Player * createPlayer(void){   // creates the player with the inicial settings
     p->speed.x = 120;
     p->speed.y = 120;
     p->netTimer = 0;
-    p->netOffset = 40;
+    p->netOffset = 38;
     p->netSize = (Vector2){24, 24};
     p->lastDir = RIGHT;
 
@@ -47,22 +47,12 @@ void drawPlayer(Player *p, float timer){
         source.width * currentWindowScale,
         source.height * currentWindowScale
     };
+
     Vector2 offset = {res / 2 * currentWindowScale, res / 2 * currentWindowScale};
     Color tint = {255, 255, 255, 255 * (1 - (int)(p->damageCooldown * 15) % 2)};
 
-    Vector2 netPos = {
-        p->collision.x + (p->collision.width - p->netSize.x) / 2,
-        p->collision.y + (p->collision.height - p->netSize.y) / 2
-    };
-
-    switch(p->lastDir) {
-        case LEFT:
-            source.x += res;
-            source.width *= -1;
-            netPos.x -= p->netOffset;
-            break;
-        default:
-            netPos.x += p->netOffset;
+    if(p->lastDir == LEFT) {
+        source.width *= -1;
     }
 
     DrawTexturePro(*texture, source, dest, offset, 0, tint);
@@ -77,7 +67,21 @@ void drawPlayer(Player *p, float timer){
         (Color){0, 255, 255, 63}
     );
     //Temporary net collision display
-    if(p->netTimer > 0 && p->netTimer < 0.25 && p->collision.y > globalWaterSurfaceHeight) {
+
+    Vector2 netPos = {
+        p->collision.x + (p->collision.width - p->netSize.x) / 2,
+        p->collision.y + (p->collision.height - p->netSize.y) / 2
+    };
+
+    switch(p->lastDir) {
+        case LEFT:
+            netPos.x -= p->netOffset;
+            break;
+        default:
+            netPos.x += p->netOffset;
+    }
+
+    if(p->netTimer > 0 && p->netTimer < 0.25) {
         DrawRectangle(
             netPos.x * currentWindowScale,
             netPos.y * currentWindowScale,
