@@ -35,7 +35,7 @@ void drawPlayer(Player *p, float timer){
     int res = 64;
     Rectangle source = {res * (int)(timer * 10), res * (p->collision.y == globalWaterSurfaceHeight), res, res};
 
-    if(p->netTimer > 0 && p->collision.y > globalWaterSurfaceHeight) {
+    if(p->netTimer > 0) {
         texture = &rm.playerAttacking;
         res = 128;
         source = (Rectangle){res * (int)((0.4 - p->netTimer) * 15), 0, res, res};
@@ -101,7 +101,7 @@ void updatePlayer(Player *p, float delta){
     }
 
     //Only use net if the timer is set to 0
-    if(p->netTimer == 0 && p->collision.y > globalWaterSurfaceHeight && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_E))){
+    if(p->netTimer == 0 && (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_E))){
         p->netTimer = 0.4;
     }
 

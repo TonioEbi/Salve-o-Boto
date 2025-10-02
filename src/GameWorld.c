@@ -135,7 +135,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
 
     //Oxygen control
     if(gw->player->oxygen > 0){
-        if(gw->player->collision.y == globalWaterSurfaceHeight) {
+        if(gw->player->collision.y == globalWaterSurfaceHeight && gw->player->netTimer == 0) {
             if(gw->player->oxygen < MAX_OXYGEN) {
                 gw->player->oxygen = fmin(gw->player->oxygen + 3 * delta, MAX_OXYGEN);
             }
