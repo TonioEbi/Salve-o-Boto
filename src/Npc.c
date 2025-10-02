@@ -30,9 +30,9 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
             case 11: n->collision = (Rectangle){0, 0, 14, 8}; break;
             case 12: n->collision = (Rectangle){0, 0, 16, 10}; break;
             case 13: n->collision = (Rectangle){0, 0, 24, 10}; break;
-            case 16: n->collision = (Rectangle){0, 0, 24, 10}; break;
-            case 14: n->collision = (Rectangle){0, 0, 24, 12}; break;
-            case 15: n->collision = (Rectangle){0, 0, 8, 32}; break;
+            case 14: n->collision = (Rectangle){0, 0, 24, 10}; break;
+            case 15: n->collision = (Rectangle){0, 0, 24, 12}; break;
+            case 16: n->collision = (Rectangle){0, 0, 8, 32}; break;
             default: n->collision = (Rectangle){0, 0, 8, 8};
         }
 
@@ -48,7 +48,6 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
         n->collisionOxygen = -20;
         n->captureOxygen = 0;
         n->captureScore = 1;
-        n->rotation = 0;
     }
 
     n->collision.x = globalPixelWidth + 16; //Padding so the textures don't immediately pop into view
@@ -107,14 +106,8 @@ void drawNpc(Npc* n){ //draws the npc
             source.height * currentWindowScale
         };
         Vector2 offset = (Vector2){texture->width / 2 * currentWindowScale, texture->height / 2 * currentWindowScale};
-        
-        float rotation = 0.0f;
-            if ((n->type == NPC_GARBAGE && n->variant == 1 ) ||(n->type == NPC_ANIMAL && (n->variant == 7 || n->variant == 8))){
-                 rotation = n->rotation;
-            }
-       
 
-        DrawTexturePro(*texture, source, dest, offset, rotation, WHITE);
+        DrawTexturePro(*texture, source, dest, offset, 0, WHITE);
 
         /*
         //Temporary collision display
@@ -213,18 +206,6 @@ void updateNpc(Npc *n, float delta){ //update the npc position and state
         else {
             //Animal or garbage
             n->collision.x -= n->speed.x * delta;
-        }
-
-        // Garbage CD rotation
-        if(n->type == NPC_GARBAGE && n->variant == 1) {
-            n->rotation -= 90.0f * delta; 
-            if(n->rotation < -360.0f) n->rotation += 360.0f;
-        }
-
-        // Starfish (animal 7 and 8) rotation
-        if(n->type == NPC_ANIMAL && (n->variant == 7 || n->variant == 8)) {
-            n->rotation -= 45.0f * delta; 
-            if(n->rotation < -360.0f) n->rotation += 360.0f;
         }
     }
 }

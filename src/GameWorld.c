@@ -43,10 +43,7 @@ GameWorld* createGameWorld( State initialState ) { //initialize the gameworld wi
     gw->timer = 0.0f;
     gw->spawnTimer = 0.0f;
     gw->spawnInterval = INITIAL_SPAWN_INTERVAL;
-    gw->timeCount = 0;
-    gw->lastSec = 0;
-    gw->BubbleTimer = 0;
-    gw->activeBubble = 0;
+    gw->bubbleTimer = 0;
     gw->gameState = initialState;
     gw->escapedEnemies = 0;
     gw->caughtEnemies = 0;
@@ -72,9 +69,10 @@ void destroyGameWorld( GameWorld *gw ) { //free the gameworld from the memory
  */
 void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with all its components
     gw->timer += delta;
-    updatePlayer( gw->player, delta );
     gw->spawnTimer += delta;
-    gw->BubbleTimer += delta;
+    gw->bubbleTimer += delta;
+
+    updatePlayer( gw->player, delta );
 
     //Pause function
     if(gw->gameState == GAME_RUNNING){
@@ -83,54 +81,44 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
         }
     }
 
-    //timer logic that controls the enemies spawn
-    int currentSec = (int)gw->timer;
+    //Npc spawn logic
+    if(gw->spawnTimer > gw->spawnInterval){
+        gw->spawnTimer = 0.0f;
 
-    if (currentSec > gw->lastSec) {
-        gw->timeCount++;
-        gw->BubbleTimer++;
-        gw->lastSec = currentSec;
-
-        //Npc spawn logic
-        if(gw->spawnTimer >= gw->spawnInterval){
-            gw->spawnTimer = 0.0f;
-
-            if (gw->activeNpc < MAX_NPC) {
-                for (int i = 0; i < MAX_NPC; i++) {
-                    if (gw->npc[i] == NULL) {
-                        gw->npc[i] = createNpc(gw->npcSpeed);
-                        gw->activeNpc++;
-                        break;                   
-                    }
+        if(gw->activeNpc < MAX_NPC) {
+            for (int i = 0; i < MAX_NPC; i++) {
+                if (gw->npc[i] == NULL) {
+                    gw->npc[i] = createNpc(gw->npcSpeed);
+                    gw->activeNpc++;
+                    break;                   
                 }
             }
         }
+    }
 
-        // Increase the speed and decrease spawn interval of the game if x enemies escape/are captured
-        if(gw->escapedEnemies >= ENEMY_ESCAPE_LIMIT || gw->caughtEnemies >= ENEMY_CAUGHT_LIMIT) {
-            gw->npcSpeed += 4;
-            gw->npcSpeed = fmin(gw->npcSpeed, MAX_NPC_SPEED);
-            gw->spawnInterval = fmax(gw->spawnInterval - SPAWN_DECREMENT, MIN_SPAWN_INTERVAL);
+    //Bubble spawn logic
+    if(gw->bubbleTimer > BUBBLE_SPAWN_INTERVAL){
+        gw->bubbleTimer = 0.0f;
 
-            // Reset the counters
-            gw->escapedEnemies = 0;
-            gw->caughtEnemies = 0;
-        }
-
-        //Bubble spawn logic
-        if(gw->BubbleTimer >= BUBBLE_SPAWN_INTERVAL){
-            gw->BubbleTimer = 0.0f;
-
-            if(gw->activeNpc < MAX_NPC) {
-                for(int i = 0; i < MAX_NPC; i++) {
-                    if(gw->npc[i] == NULL) {
-                        gw->npc[i] = createBubble(68);
-                        gw->activeNpc++;
-                        break;
-                    }
+        if(gw->activeNpc < MAX_NPC) {
+            for(int i = 0; i < MAX_NPC; i++) {
+                if(gw->npc[i] == NULL) {
+                    gw->npc[i] = createBubble(68);
+                    gw->activeNpc++;
+                    break;
                 }
             }
         }
+    }
+
+    //Increase the speed and decrease spawn interval of the game if x enemies escape/are captured
+    if(gw->escapedEnemies >= ENEMY_ESCAPE_LIMIT || gw->caughtEnemies >= ENEMY_CAUGHT_LIMIT) {
+        gw->npcSpeed = fmin(gw->npcSpeed + 4, MAX_NPC_SPEED);
+        gw->spawnInterval = fmax(MIN_SPAWN_INTERVAL, gw->spawnInterval - SPAWN_DECREMENT);
+
+        //Reset the counters
+        gw->escapedEnemies = 0;
+        gw->caughtEnemies = 0;
     }
 
     //Oxygen control
@@ -173,7 +161,7 @@ void updateGameWorld( GameWorld *gw, float delta ) { //update the gameworld with
                 checkNpcCollision(gw->player, gw->npc[i]);
 
                 //Checks if the NPC has escaped
-                if(gw->npc[i]->collision.x + gw->npc[i]->collision.width < 0){
+                if(gw->npc[i]->collision.x + gw->npc[i]->collision.width + 16 < 0){
                     gw->npc[i]->shouldBeRemoved = true;
                     gw->npc[i]->removalCountdown = 0;
 

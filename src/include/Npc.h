@@ -14,7 +14,6 @@ typedef struct Npc {
     bool removeOnCollision;
     bool shouldBeRemoved;
     float removalCountdown;
-    float rotation;
 }Npc;
 
 Npc* createNpc(float speed);

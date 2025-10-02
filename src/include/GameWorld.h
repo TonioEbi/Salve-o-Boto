@@ -14,13 +14,11 @@
 #define ENEMY_ESCAPE_LIMIT 5
 #define ENEMY_CAUGHT_LIMIT 15
 #define MAX_NPC_SPEED 250
-#define MAX_NPC 10000
+#define MAX_NPC 1000
 #define INITIAL_SPAWN_INTERVAL 1.0f
 #define MIN_SPAWN_INTERVAL 0.25f
 #define SPAWN_DECREMENT 0.025f
 #define BUBBLE_SPAWN_INTERVAL 6.0f
-
-
 
 typedef struct GameWorld {
     Player *player;
@@ -29,10 +27,7 @@ typedef struct GameWorld {
     float timer;
     float spawnTimer;
     float spawnInterval;
-    int timeCount;
-    int lastSec;
-    int BubbleTimer;
-    int activeBubble;
+    float bubbleTimer;
     State gameState;
     int escapedEnemies;
     int caughtEnemies;
