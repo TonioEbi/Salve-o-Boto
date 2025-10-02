@@ -14,7 +14,7 @@ Player * createPlayer(void){   // creates the player with the inicial settings
         return NULL;
     }
 
-    p->collision.width = 42;
+    p->collision.width = 40;
     p->collision.height = 20;
     p->collision.x = (globalPixelWidth - p->collision.width) / 2.0f ;
     p->collision.y = globalPixelHeight * 0.6f;
@@ -67,7 +67,7 @@ void drawPlayer(Player *p, float timer){
 
     DrawTexturePro(*texture, source, dest, offset, 0, tint);
 
-
+    /*
     //Temporary player collision display
     DrawRectangle(
         p->collision.x * currentWindowScale,
@@ -86,7 +86,7 @@ void drawPlayer(Player *p, float timer){
             (Color){255, 255, 0, 63}
         );
     }
-
+    */
 }
 
 void updatePlayer(Player *p, float delta){

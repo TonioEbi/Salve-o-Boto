@@ -24,7 +24,7 @@ void checkNpcCollision(Player* p, Npc* n) {
 
 void checkNpcCapture(GameWorld *gw, Player* p, Npc* n) {
     //Checks if the player is currently using the net
-    if(p->netTimer > 0 && p->netTimer < 0.25 && p->collision.y > globalWaterSurfaceHeight) {
+    if(p->netTimer > 0 && p->netTimer < 0.25) {
         Rectangle netRec = {
             p->collision.x + (p->collision.width - p->netSize.x) / 2,
             p->collision.y + (p->collision.height - p->netSize.y) / 2,
