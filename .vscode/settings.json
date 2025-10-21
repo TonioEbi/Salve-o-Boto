@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "raylib.h": "c",
+        "gamewindow.h": "c",
+        "stdio.h": "c",
+        "stdbool.h": "c",
+        "gamemechanics.h": "c",
+        "stdlib.h": "c",
+        "math.h": "c",
+        "resourcemanager.h": "c",
+        "player.h": "c",
+        "npc.h": "c",
+        "globalvariables.h": "c",
+        "enums.h": "c",
+        "gameworld.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

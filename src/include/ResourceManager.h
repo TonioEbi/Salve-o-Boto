@@ -10,9 +10,59 @@
 #include "raylib/raylib.h"
 
 typedef struct ResourceManager {
-    Texture2D textureExample;
-    Sound soundExample;
-    Music musicExample;
+    //Misc. Images
+    Image icon;
+
+    //Player
+    Texture2D player;
+    Texture2D playerAttacking;
+    Texture2D oxyTank;
+
+    //NPCs
+    Texture2D animalArray[17];
+    Texture2D enemyArray[11];
+
+    Texture2D bubbleIdle;
+    Texture2D bubblePop;
+    Texture2D bubbleBreathe;
+
+    //Game BGs
+    Texture2D skyBgDay;
+    Texture2D cityBgDay;
+    Texture2D waterBg;
+    Texture2D floorBg;
+    Texture2D skyBgAfternoon;
+    Texture2D cityBgAfternoon;
+    Texture2D floorBgAfternoon;
+    Texture2D skyBgNight;
+    Texture2D cityBgNight;
+    Texture2D floorBgNight;
+
+    //Game FGs
+    Texture2D foamFg;
+    Texture2D bubbleFg;
+    Texture2D floorFg;
+
+    //Menus
+    Texture2D menuBg; 
+    Texture2D menuCredits;
+    Texture2D menuControls;
+    Texture2D menuGameOver;
+    Texture2D menuPause;
+
+    //Botões
+    Texture2D controlsButton;
+    Texture2D playButton;
+    Texture2D creditsButton;
+    Texture2D backButton;
+    Texture2D menuButton;
+    Texture2D againButton;
+    Texture2D backButton2;
+
+    //Sound soundExample;
+    
+    Music bg_tune;
+    
 } ResourceManager;
 
 /**

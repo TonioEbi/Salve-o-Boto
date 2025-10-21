@@ -1,33 +1,72 @@
-#include "Player.h"
-#include "Npc.h"
-#include <stdbool.h>
-#include "GameMechanics.h"
-#include "raylib/raylib.h"
 #include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
 
-bool playerNpcCollision(Player* p, Npc* n){
-    if(p->size.x + p->size.width > n->size.x){ //checks for frontal collision
-        if(p->size.x < n->size.x + n->size.width){ //checks if the player is inside the npc space
-            if(p->size.y + p->size.height > n->size.y){ //checks if the player is in the same route as the npc
-                if(p->size.y < n->size.y + n->size.height){
-                        
-                    return true;
-                }
+#include "raylib/raylib.h"
+
+#include "GameMechanics.h"
+#include "GlobalVariables.h"
+
+void checkNpcCollision(Player* p, Npc* n) {
+    //Only check for collision if the player is not intangible
+    if(p->damageCooldown == 0) {
+        //Checks if the NPC collided with the player
+        if(CheckCollisionRecs(p->collision, n->collision)){
+            awardCollisionBonus(p, n);
+
+            //If the NPC is set to be removed after a collision, mark it for removal
+            if(n->removeOnCollision) {
+                n->shouldBeRemoved = true;
             }
         }
     }
-    return false;
 }
 
-void isCaptured(Player* p, Npc* n){
-    if(playerNpcCollision(p, n)){
-        if(IsKeyPressed(KEY_SPACE)){
-            n->captured = true; //the player capture the npc as he colide with they and press the space bar
-            if(n->enemy){ //checks if the npc is a enemy, if it is the player scores, if it ain't the player loses a life
-                p->score++;
-            }else{
-                p->life--; 
+void checkNpcCapture(GameWorld *gw, Player* p, Npc* n) {
+    //Checks if the player is currently using the net
+    if(p->netTimer > 0 && p->netTimer < 0.25) {
+        Rectangle netRec = {
+            p->collision.x + (p->collision.width - p->netSize.x) / 2,
+            p->collision.y + (p->collision.height - p->netSize.y) / 2,
+            p->netSize.x,
+            p->netSize.y
+        };
+
+        switch(p->lastDir) {
+            case LEFT: netRec.x -= p->netOffset; break;
+            default: netRec.x += p->netOffset;
+        }
+
+        if(CheckCollisionRecs(netRec, n->collision)) {
+            //Mark NPC for removal
+            n->shouldBeRemoved = true;
+
+            awardCaptureBonus(p, n);
+
+            if(n->type == NPC_GARBAGE) {
+                gw->caughtEnemies++;
             }
         }
+    }
+}
+
+void awardCollisionBonus(Player* p, Npc* n) {
+    //Awards the player with the NPC's oxygen bonus. May be positive or negative.
+    p->oxygen = fmin(p->oxygen + n->collisionOxygen, MAX_OXYGEN);
+
+    //If the oxygen gain is negative, damage the player
+    if(n->collisionOxygen < 0) {
+        p->damageCooldown = 1;
+    }
+}
+
+void awardCaptureBonus(Player* p, Npc* n) {
+    //Awards the player with the NPC's score and oxygen bonuses. May be positive or negative.
+    score += n->captureScore;
+    p->oxygen = fmin(p->oxygen + n->captureOxygen, MAX_OXYGEN);
+
+    //If the oxygen gain is negative, damage the player
+    if(n->captureOxygen < 0) {
+        p->damageCooldown = 1;
     }
 }
