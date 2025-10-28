@@ -24,21 +24,20 @@ Npc* createNpc(float speed){ //creates the npc with the starting values
     if(n->type == NPC_ANIMAL) {
         n->variant = GetRandomValue(0, 16);
 
-        //Determines the collision depending on the variant
+        //Determines the collision and capture score depending on the variant
         switch(n->variant) {
-            case 10: n->collision = (Rectangle){0, 0, 8, 14}; break;
-            case 11: n->collision = (Rectangle){0, 0, 14, 8}; break;
-            case 12: n->collision = (Rectangle){0, 0, 16, 10}; break;
-            case 13: n->collision = (Rectangle){0, 0, 24, 10}; break;
-            case 14: n->collision = (Rectangle){0, 0, 24, 10}; break;
-            case 15: n->collision = (Rectangle){0, 0, 24, 12}; break;
-            case 16: n->collision = (Rectangle){0, 0, 8, 32}; break;
-            default: n->collision = (Rectangle){0, 0, 8, 8};
+            case 10: n->collision = (Rectangle){0, 0, 8, 14}; n->captureScore = -3; break;
+            case 11: n->collision = (Rectangle){0, 0, 14, 8}; n->captureScore = -3; break;
+            case 12: n->collision = (Rectangle){0, 0, 16, 10}; n->captureScore = -5; break;
+            case 13: n->collision = (Rectangle){0, 0, 24, 10}; n->captureScore = -5; break;
+            case 14: n->collision = (Rectangle){0, 0, 24, 10}; n->captureScore = -5; break;
+            case 15: n->collision = (Rectangle){0, 0, 24, 12}; n->captureScore = -5; break;
+            case 16: n->collision = (Rectangle){0, 0, 8, 32}; n->captureScore = -8; break;
+            default: n->collision = (Rectangle){0, 0, 8, 8}; n->captureScore = -3;
         }
 
         n->collisionOxygen = -10;
         n->captureOxygen = -20;
-        n->captureScore = -3;
     }
     else{ //NPC_GARBAGE
         n->variant = GetRandomValue(0, 10);

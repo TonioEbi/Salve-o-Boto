@@ -213,72 +213,102 @@ void drawGameWorld( GameWorld *gw ) { //draws the gameworld with all its compone
  * @brief Draws the environment behind all entities.
  */
 void drawBackground( float time ) {
-    Texture2D* skyBg;
-    Texture2D* cityBg;
-    Texture2D* waterBg;
-    Texture2D* floorBg;
+    Texture2D *celestial;
+    Color skyColor;
+    Color cloudShadowColor;
+    Color cloudHighlightColor;
+    Color cityscapeColor;
+    Color cityOverlayColor;
+    Color waterColor;
+
+    int dayTimeInterval = 5;
+
+    //Used for updating the color of certain background elements
+    float colorLerpProgress = fmin(fmax(0, fmod(time, dayTimeInterval) - dayTimeInterval + 1), 1);
+
+    switch((int)(time / dayTimeInterval) % 4) {
+        case 1: //Sunset
+            celestial = &rm.sunBg;
+            skyColor = interpolateColor((Color){255, 108, 36, 255}, (Color){29, 43, 83, 255}, colorLerpProgress);
+            cloudHighlightColor = interpolateColor((Color){255, 241, 232, 255}, (Color){194, 195, 199, 255}, colorLerpProgress);
+            cloudShadowColor = interpolateColor((Color){255, 204, 170, 255}, (Color){131, 118, 156, 255}, colorLerpProgress);
+            cityscapeColor = interpolateColor((Color){73, 51, 59, 255}, (Color){0, 0, 0, 255}, colorLerpProgress);
+            cityOverlayColor = interpolateColor((Color){73, 51, 59, 255}, (Color){243, 239, 125, 255}, colorLerpProgress);
+            waterColor = interpolateColor((Color){18, 83, 89, 255}, (Color){17, 29, 53, 255}, colorLerpProgress);
+            break;
+
+        case 2: //Night
+            celestial = &rm.moonBg;
+            skyColor = interpolateColor((Color){29, 43, 83, 255}, (Color){117, 70, 101, 255}, colorLerpProgress);
+            cloudHighlightColor = interpolateColor((Color){194, 195, 199, 255}, (Color){255, 157, 129, 255}, colorLerpProgress);
+            cloudShadowColor = interpolateColor((Color){131, 118, 156, 255}, (Color){255, 110, 89, 255}, colorLerpProgress);
+            cityscapeColor = interpolateColor((Color){0, 0, 0, 255}, (Color){74, 51, 59, 255}, colorLerpProgress);
+            cityOverlayColor = (Color){243, 239, 125, 255};
+            waterColor = interpolateColor((Color){17, 29, 53, 255}, (Color){18, 83, 89, 255}, colorLerpProgress);
+            break;
+
+        case 3: //Sunrise
+            celestial = &rm.moonBg;
+            skyColor = interpolateColor((Color){117, 70, 101, 255}, (Color){41, 173, 255, 255}, colorLerpProgress);
+            cloudHighlightColor = interpolateColor((Color){255, 157, 129, 255}, (Color){255, 241, 232, 255}, colorLerpProgress);
+            cloudShadowColor = interpolateColor((Color){255, 110, 89, 255}, (Color){194, 195, 199, 255}, colorLerpProgress);
+            cityscapeColor = interpolateColor((Color){74, 51, 59, 255}, (Color){6, 90, 181, 255}, colorLerpProgress);
+            cityOverlayColor = interpolateColor((Color){243, 239, 125, 255}, (Color){6, 90, 181, 255}, colorLerpProgress);
+            waterColor = (Color){18, 83, 89, 255};
+            break;
+
+        default:
+            celestial = &rm.sunBg;
+            skyColor = interpolateColor((Color){41, 173, 255, 255}, (Color){255, 108, 36, 255}, colorLerpProgress);
+            cloudHighlightColor = (Color){255, 241, 232, 255};
+            cloudShadowColor = interpolateColor((Color){194, 195, 199, 255}, (Color){255, 204, 170, 255}, colorLerpProgress);
+            cityscapeColor = interpolateColor((Color){6, 90, 181, 255}, (Color){73, 51, 59, 255}, colorLerpProgress);
+            cityOverlayColor = interpolateColor((Color){6, 90, 181, 255}, (Color){73, 51, 59, 255}, colorLerpProgress);
+            waterColor = (Color){18, 83, 89, 255};
+    }
 
     Rectangle source;
     Rectangle dest;
     Vector2 offset = {0, 0};
 
-    int dayTimeInterval = 60;
-
-    //Only changes textures in 60 second intervals
-    if((int)time % dayTimeInterval == 0) {
-        switch((int)(time / dayTimeInterval) % 4) {
-            /*
-            case 1:
-                gameBg = &rm.skyBgAfternoon;
-                cityBg = &rm.cityBgAfternoon;
-                waterBg = &rm.waterBgAfternoon;
-                floorBg = &rm.floorBgAfternoon;
-                break;
-            case 2:
-                gameBg = &rm.skyBgNight;
-                cityBg = &rm.cityBgNight;
-                waterBg = &rm.waterBgNight;
-                floorBg = &rm.floorBgNight;
-                break;
-                
-            case 3:
-                gameBg = &rm.skyBgAfternoon;
-                cityBg = &rm.cityBgAfternoon;
-                waterBg = &rm.waterBgAfternoon;
-                floorBg = &rm.floorBgAfternoon;
-                break;
-            
-            */
-
-            default:
-                skyBg = &rm.skyBgDay;
-                cityBg = &rm.cityBgDay;
-                waterBg = &rm.waterBg;
-                floorBg = &rm.floorBg;
-        }
-    }
-    
     //Sky
+    DrawRectangle(0, 0, GetScreenWidth(), 64 * currentWindowScale, skyColor);
+
+    //Celestial
+    float celestialAngle = (fmod((time + 1) / dayTimeInterval / 2, 1)) * PI;
+    int celestialX = (int)(globalPixelWidth * (0.5 - 0.4 * cosf(celestialAngle))) * currentWindowScale;
+    int celestialY = (int)(globalPixelHeight * (0.5 - 0.3 * sinf(celestialAngle))) * currentWindowScale;
+    source = (Rectangle){0, 0, 32, 32};
+    dest = (Rectangle){celestialX, celestialY, 32 * currentWindowScale, 32 * currentWindowScale};
+    DrawTexturePro(*celestial, source, dest, (Vector2){16 * currentWindowScale, 24 * currentWindowScale}, 0, WHITE);
+
+    //Clouds
     source = (Rectangle){0, 0, 320, 64};
     dest = (Rectangle){0, 0, GetScreenWidth(), 64 * currentWindowScale};
-    DrawTexturePro(*skyBg, source, dest, offset, 0, WHITE);
+    DrawTexturePro(rm.cloudShadowBg, source, dest, offset, 0, cloudShadowColor);
+    DrawTexturePro(rm.cloudHighlightBg, source, dest, offset, 0, cloudHighlightColor);
 
     //Cityscape
     source = (Rectangle){(int)time, 0, 320, 180};
     dest = (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()};
-    DrawTexturePro(*cityBg, source, dest, offset, 0, WHITE);
+    DrawTexturePro(rm.cityscapeBg, source, dest, offset, 0, cityscapeColor);
+    DrawTexturePro(rm.cityOverlayBg, source, dest, offset, 0, cityOverlayColor);
 
     //Water
     dest = (Rectangle){0, 52 * currentWindowScale, GetScreenWidth(), 128 * currentWindowScale};
     source = (Rectangle){320 + (int)(time * 70), 0, 320, 128};
-    DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
+    DrawTexturePro(rm.waterBg, source, dest, offset, 0, waterColor);
+    source.height /= 4;
+    dest.height /= 4;
+    DrawTexturePro(rm.foamFg, source, dest, offset, 0, WHITE);
     source = (Rectangle){(int)(time * 90), 0, 320, 128};
-    DrawTexturePro(*waterBg, source, dest, offset, 0, WHITE);
+    dest.height *= 4;
+    DrawTexturePro(rm.waterBg, source, dest, offset, 0, waterColor);
 
     //Floor
     source = (Rectangle){(int)(time * 40), 0, 320, 64};
     dest = (Rectangle){0, 116 * currentWindowScale, GetScreenWidth(), 64 * currentWindowScale};
-    DrawTexturePro(*floorBg, source, dest, offset, 0, WHITE);
+    DrawTexturePro(rm.floorBg, source, dest, offset, 0, WHITE);
 }
 
 /**
@@ -303,4 +333,16 @@ void drawForeground( float time ) {
     source = (Rectangle){(int)(time * 110), 0, 320, 32};
     dest = (Rectangle){0, 148 * currentWindowScale, GetScreenWidth(), 32 * currentWindowScale};
     DrawTexturePro(rm.floorFg, source, dest, offset, 0, WHITE);
+}
+
+/**
+ * @brief Interpolates the progress between the specified start and end colors
+ */
+Color interpolateColor( Color start, Color end, float progress ) {
+    int lerpR = start.r + (int)((end.r - start.r) * progress);
+    int lerpG = start.g + (int)((end.g - start.g) * progress);
+    int lerpB = start.b + (int)((end.b - start.b) * progress);
+    int lerpA = start.a + (int)((end.a - start.a) * progress);
+
+    return (Color){lerpR, lerpG, lerpB, lerpA};
 }

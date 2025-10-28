@@ -63,3 +63,8 @@ void drawBackground( float time );
  * @brief Draws the environment in front of all entities.
  */
 void drawForeground( float time );
+
+/**
+ * @brief Interpolates the progress between the specified start and end colors
+ */
+Color interpolateColor( Color start, Color end, float progress );
