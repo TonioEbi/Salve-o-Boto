@@ -221,7 +221,7 @@ void drawBackground( float time ) {
     Color cityOverlayColor;
     Color waterColor;
 
-    int dayTimeInterval = 5;
+    int dayTimeInterval = 60;
 
     //Used for updating the color of certain background elements
     float colorLerpProgress = fmin(fmax(0, fmod(time, dayTimeInterval) - dayTimeInterval + 1), 1);
