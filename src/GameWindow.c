@@ -61,31 +61,6 @@ void handleInputs(GameWindow *gw) {
     if(IsKeyPressed(KEY_ENTER)) sendInputEvent(INPUT_UI_SELECT);
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) sendInputEvent(INPUT_UI_CLICK);
 
-    //Change window size
-    if(IsKeyPressed(KEY_F4)) {
-        int scaleFactor = 2;
-        int newWidth = GetScreenWidth() + globalPixelWidth * scaleFactor;
-        int newHeight = GetScreenHeight() + globalPixelHeight * scaleFactor;
-
-        if(GetMonitorWidth(0) >= newWidth && GetMonitorHeight(0) >= newHeight) {
-            SetWindowSize(newWidth, newHeight);
-            currentWindowScale += scaleFactor;
-
-            //If the new resolution is the same as the monitor
-            if(GetMonitorWidth(0) == newWidth && GetMonitorHeight(0) == newHeight) {
-                ToggleBorderlessWindowed();
-            }
-        }
-        else {
-            ToggleBorderlessWindowed();
-            currentWindowScale = scaleFactor;
-            SetWindowSize(globalPixelWidth * currentWindowScale, globalPixelHeight * currentWindowScale);
-        }
-
-        //Center the window
-        SetWindowPosition((GetMonitorWidth(0) - GetScreenWidth()) / 2, (GetMonitorHeight(0) - GetScreenHeight()) / 2);
-    }
-
     //Ingame inputs
     if(gw->state == GAME_RUNNING) {
         Player *p = gw->gameWorld->player;
@@ -109,6 +84,31 @@ void handleInputs(GameWindow *gw) {
             if(IsKeyPressed(KEY_TWO)) setInterval(gw->gameWorld, 0.5);
             if(IsKeyPressed(KEY_THREE)) setInterval(gw->gameWorld, 0.005);
         }
+    }
+
+    //Change window size
+    if(IsKeyPressed(KEY_F4)) {
+        int scaleFactor = 2;
+        int newWidth = GetScreenWidth() + globalPixelWidth * scaleFactor;
+        int newHeight = GetScreenHeight() + globalPixelHeight * scaleFactor;
+
+        if(GetMonitorWidth(0) >= newWidth && GetMonitorHeight(0) >= newHeight) {
+            SetWindowSize(newWidth, newHeight);
+            currentWindowScale += scaleFactor;
+
+            //If the new resolution is the same as the monitor
+            if(GetMonitorWidth(0) == newWidth && GetMonitorHeight(0) == newHeight) {
+                ToggleBorderlessWindowed();
+            }
+        }
+        else {
+            ToggleBorderlessWindowed();
+            currentWindowScale = scaleFactor;
+            SetWindowSize(globalPixelWidth * currentWindowScale, globalPixelHeight * currentWindowScale);
+        }
+
+        //Center the window
+        SetWindowPosition((GetMonitorWidth(0) - GetScreenWidth()) / 2, (GetMonitorHeight(0) - GetScreenHeight()) / 2);
     }
 }
 
