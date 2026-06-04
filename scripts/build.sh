@@ -33,7 +33,7 @@ compile_project() {
     echo "Compiling..."
 
     SrcFiles=$(find "$SrcDir" -name "*.c")
-    ObjFiles=$(find "$BuildDir" -path "${ObjDir}/windows/*" -prune -o -name "*.o")
+    ObjFiles=$(find "$ObjDir" -name "*.o" | grep -v "${ObjDir}/windows")
 
     mkdir -p "$BinDir"
 
