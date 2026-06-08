@@ -18,7 +18,19 @@ param(
     [switch]$run
 );
 
-$CompiledFile = "build\aquapura.exe"
+Push-Location "$PSScriptRoot\.."
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+$SrcDir="src"
+$BuildDir="build"
+$ScriptsDir="scripts"
+
+$BinDir="${BuildDir}\bin"
+$ObjDir="${BuildDir}\obj"
+$GeneratedDir="${BuildDir}\generated"
+
+$CompiledFile="${BinDir}\aquapura.exe"
+$BuildResourcesScript="${ScriptsDir}\build-resources.bat"
 
 $all = $false
 if ( -not( $clean -or $cleanAndCompile -or $compile -or $compileAndRun -or $run ) ) {
@@ -37,12 +49,24 @@ if ( $clean -or $cleanAndCompile -or $all ) {
 if ( $compile -or $cleanAndCompile -or $compileAndRun -or $all ) {
     Write-Host "Compiling..."
 
-    windres "src\aquapura.rc" -o "build\obj\aquapura.rc.o" --target=pe-x86-64 --codepage=65001
+    if ( -not (Test-Path "$ObjDir") ) {
+        & .\"$BuildResourcesScript"
+    }
 
-    $SourceFiles = Get-ChildItem -Path "src" -Filter "*.c" -Recurse | ForEach-Object { $_.FullName }
-    $ObjFiles = Get-ChildItem -Path "build\obj" -Filter "*.o" -Recurse | ForEach-Object { $_.FullName }
+    if ( -not (Test-Path "$ObjDir\windows") ) {
+        New-Item -ItemType Directory -Force -Path "$ObjDir\windows"
+    }
 
-    gcc $SourceFiles $ObjFiles -o $CompiledFile `
+    windres "${SrcDir}\aquapura.rc" -o "${ObjDir}\windows\aquapura.rc.o" --target=pe-x86-64 --codepage=65001
+
+    $SrcFiles = Get-ChildItem -Path "$SrcDir" -Filter "*.c" -Recurse | ForEach-Object { $_.FullName }
+    $ObjFiles = Get-ChildItem -Path "$ObjDir" -Filter "*.o" -Recurse | ForEach-Object { $_.FullName }
+
+    if ( -not (Test-Path $BinDir) ) {
+        New-Item -ItemType Directory -Force -Path "$BinDir"
+    }
+
+    gcc $SrcFiles $ObjFiles -o "$CompiledFile" `
         -O1 `
         -Wall `
         -Wextra `
@@ -50,8 +74,9 @@ if ( $compile -or $cleanAndCompile -or $compileAndRun -or $all ) {
         -pedantic-errors `
         -std=c99 `
         -Wno-missing-braces `
-        -I src/include/ `
-        -L lib/ `
+        "-I${SrcDir}\include" `
+        "-I${GeneratedDir}\include" `
+        -Llib `
         -lraylib `
         -lopengl32 `
         -lgdi32 `
@@ -62,9 +87,11 @@ if ( $compile -or $cleanAndCompile -or $compileAndRun -or $all ) {
 # run
 if ( $run -or $compileAndRun -or $all ) {
     Write-Host "Running..."
-    if ( Test-Path $CompiledFile ) {
-        & .\$CompiledFile
+    if ( Test-Path "$CompiledFile" ) {
+        & .\"$CompiledFile"
     } else {
         Write-Host "$CompiledFile does not exist!"
     }
 }
+
+Pop-Location

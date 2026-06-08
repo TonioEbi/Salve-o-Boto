@@ -1,4 +1,5 @@
 @ECHO OFF
+SETLOCAL ENABLEDELAYEDEXPANSION
 
 REM Custom build script (batch file).
 REM
@@ -11,16 +12,17 @@ REM    .\build-resources.bat -generateHeader: generate header based on the resou
 REM
 REM Based on Prof. Dr. David Buzatto's work
 
-SET switch=%1
-SHIFT
+PUSHD "%~dp0.."
 
+SET switch=%1
 SET currentStep=-1
 
-SETLOCAL ENABLEDELAYEDEXPANSION
-
 REM Source and output directories
-SET "SourceDirectory=resources"
-SET "OutputDirectory=build\obj"
+SET "ResourceDir=resources"
+SET "BuildDir=build"
+
+SET "ObjDir=%BuildDir%\obj"
+SET "GeneratedDir=%BuildDir%\generated"
 
 IF "%switch%"=="" GOTO allSteps
 IF "%switch%"=="-clean" GOTO cleanSteps
@@ -62,29 +64,29 @@ CALL GOTO %%steps[%currentStep%]%%
 
 :clean
 ECHO Cleaning...
-IF EXIST %OutputDirectory% rmdir /s /q %OutputDirectory%
+IF EXIST "%ObjDir%" rmdir /s /q "%ObjDir%"
 GOTO nextStep
 
 :compile
 ECHO Compiling...
 
 REM Convert resources to objects
-FOR /R "%SourceDirectory%" %%F IN (*.png *.mp3) DO (
+FOR /R "%ResourceDir%" %%F IN (*.png *.mp3) DO (
     REM Absolute path of file
-    SET "SourcePath=%%F"
+    SET "InputFile=%%F"
 
     REM Remove the absolute path so only the relative path remains
-    SET "SourcePath=!SourcePath:%CD%\=!"
+    SET "InputFile=!InputFile:%CD%\=!"
 
     REM Replicate the source structure on the output path
-    SET "OutputPath=!SourcePath:%SourceDirectory%\=!"
-    SET "OutputPath=%OutputDirectory%\!OutputPath!.o"
+    SET "OutputFile=!InputFile:%ResourceDir%\=!"
+    SET "OutputFile=%ObjDir%\!OutputFile!.o"
 
     REM Ensures that the target directory exists
-    FOR %%D IN ("!OutputPath!") DO IF NOT EXIST "%%~DPD" MKDIR "%%~DPD"
+    FOR %%D IN ("!OutputFile!") DO IF NOT EXIST "%%~DPD" MKDIR "%%~DPD"
 
-    ECHO Converting !SourcePath!...
-    ld -r -b binary -o "!OutputPath!" "!SourcePath!"
+    ECHO Converting !InputFile!...
+    ld -r -b binary -o "!OutputFile!" "!InputFile!"
 )
 
 GOTO nextStep
@@ -92,22 +94,24 @@ GOTO nextStep
 :generateHeader
 ECHO Generating header...
 
-SET HeaderFile="src\include\resources.h"
+SET "HeaderDir=%GeneratedDir%\include"
+SET "HeaderFile=%HeaderDir%\resources.h"
+IF NOT EXIST "%HeaderDir%" MKDIR "%HeaderDir%"
 
-ECHO //Automatically generated with build-resources.bat > %HeaderFile%
+ECHO //Automatically generated with build-resources.bat > "%HeaderFile%"
 (
     ECHO(
     ECHO #ifndef RESOURCES_H
     ECHO #define RESOURCES_H
     ECHO(
-) >> %HeaderFile%
+) >> "%HeaderFile%"
 
-FOR /R %SourceDirectory% %%F IN (*.png *.mp3) DO (
+FOR /R %ResourceDir% %%F IN (*.png *.mp3) DO (
     REM Full path of file
     SET "File=%%F"
 
     REM Remove the source path so only the relative path remains
-    SET "RelativePath=!File:%CD%\%SourceDirectory%\=!"
+    SET "RelativePath=!File:%CD%\%ResourceDir%\=!"
 
     REM Replace \ and . with _
     SET "RelativePath=!RelativePath:\=_!"
@@ -120,13 +124,13 @@ FOR /R %SourceDirectory% %%F IN (*.png *.mp3) DO (
         ECHO extern const unsigned char !Symbol!_start[];
         ECHO extern const unsigned char !Symbol!_end[];
         ECHO(
-    ) >> %HeaderFile%
-%
+    ) >> "%HeaderFile%"
 )
 
-ECHO #endif >> %HeaderFile%
+ECHO #endif >> "%HeaderFile%"
 GOTO nextStep
 
 :end
 
+POPD
 ENDLOCAL
